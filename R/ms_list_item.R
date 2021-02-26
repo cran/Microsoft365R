@@ -16,10 +16,10 @@
 #' - `sync_fields()`: Synchronise the R object with the item metadata in Microsoft Graph.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `get_item` method of the [ms_list] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual item.
+#' Creating new objects of this class should be done via the `get_item` method of the [`ms_list`] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual item.
 #'
 #' @seealso
-#' [ms_graph], [ms_site], [ms_list]
+#' [`ms_graph`], [`ms_site`], [`ms_list`]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [SharePoint sites API reference](https://docs.microsoft.com/en-us/graph/api/resources/sharepoint?view=graph-rest-1.0)
@@ -27,7 +27,7 @@
 #' @examples
 #' \dontrun{
 #'
-#' site <- sharepoint_site("https://mycompany.sharepoint.com/sites/my-site-name")
+#' site <- get_sharepoint_site("My site")
 #' lst <- site$get_list("mylist")
 #'
 #' lst_items <- lst$list_items(as_data_frame=FALSE)
@@ -45,11 +45,17 @@ ms_list_item <- R6::R6Class("ms_list_item", inherit=ms_object,
 
 public=list(
 
-    initialize=function(token, tenant=NULL, properties=NULL)
+    site_id=NULL,
+    list_id=NULL,
+
+    initialize=function(token, tenant=NULL, properties=NULL, site_id=NULL, list_id=NULL)
     {
+        if(is.null(site_id) || is.null(list_id))
+            stop("Must supply parent site and list IDs", call.=FALSE)
         self$type <- "list item"
-        context <- parse_listitem_context(properties[["fields@odata.context"]])
-        private$api_type <- file.path("sites", context$site_id, "lists", context$list_id, "items")
+        self$site_id <- site_id
+        self$list_id <- list_id
+        private$api_type <- file.path("sites", self$site_id, "lists", self$list_id, "items")
         super$initialize(token, tenant, properties)
     },
 
@@ -64,14 +70,3 @@ public=list(
     }
 ))
 
-
-parse_listitem_context <- function(x)
-{
-    if(is.null(x))
-        stop("Unable to initialize list item object: no OData context", call.=FALSE)
-    x <- sub("^.+#sites\\('", "", x)
-    sid <- utils::URLdecode(sub("'\\).+$", "", x))
-    x <- sub("^.+lists\\('", "", x)
-    lid <- sub("'\\).+", "", x)
-    list(site_id=sid, list_id=lid)
-}

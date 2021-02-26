@@ -1,15 +1,16 @@
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
 app <- Sys.getenv("AZ_TEST_NATIVE_APP_ID")
+site_name <- Sys.getenv("AZ_TEST_SHAREPOINT_SITE_NAME")
 site_url <- Sys.getenv("AZ_TEST_SHAREPOINT_SITE_URL")
 site_id <- Sys.getenv("AZ_TEST_SHAREPOINT_SITE_ID")
 list_name <- Sys.getenv("AZ_TEST_SHAREPOINT_LIST_NAME")
 list_id <- Sys.getenv("AZ_TEST_SHAREPOINT_LIST_ID")
 
-if(tenant == "" || app == "" || site_url == "" || site_id == "" || list_name == "" || list_id == "")
+if(tenant == "" || app == "" || site_name == "" || site_url == "" || site_id == "" || list_name == "" || list_id == "")
     skip("SharePoint tests skipped: Microsoft Graph credentials not set")
 
 if(!interactive())
-    skip("OneDrive for Business tests skipped: must be in interactive session")
+    skip("SharePoint tests skipped: must be in interactive session")
 
 tok <- try(AzureAuth::get_azure_token(
     c("https://graph.microsoft.com/.default",
@@ -22,17 +23,35 @@ if(inherits(tok, "try-error"))
 
 test_that("SharePoint client works",
 {
-    gr <- AzureGraph::ms_graph$new(token=tok)
-    testsite <- try(gr$call_graph_endpoint(file.path("sites", site_id)), silent=TRUE)
-    if(inherits(testsite, "try-error"))
+    expect_error(get_sharepoint_site(site_name=site_name, site_url=site_url, site_id=site_id,
+                                     tenant=tenant, app=app))
+
+    site1 <- try(get_sharepoint_site(site_name=site_name, tenant=tenant, app=app), silent=TRUE)
+    if(inherits(site1, "try-error"))
         skip("SharePoint tests skipped: service not available")
+    expect_is(site1, "ms_site")
+    expect_identical(site1$properties$displayName, site_name)
 
-    site <- sharepoint_site(site_url, tenant=tenant, app=app)
-    expect_is(site, "ms_site")
-
-    site2 <- sharepoint_site(site_id=site_id, tenant=tenant, app=app)
+    site2 <- get_sharepoint_site(site_url=site_url, tenant=tenant, app=app)
     expect_is(site2, "ms_site")
-    expect_identical(site$properties, site2$properties)
+    expect_identical(site1$properties$webUrl, site_url)
+
+    site3 <- get_sharepoint_site(site_id=site_id, tenant=tenant, app=app)
+    expect_is(site3, "ms_site")
+    expect_identical(site1$properties$id, site_id)
+
+    expect_identical(site1$properties, site2$properties)
+    expect_identical(site2$properties, site3$properties)
+
+    sites <- list_sharepoint_sites()
+    expect_is(sites, "list")
+    expect_true(all(sapply(sites, inherits, "ms_site")))
+})
+
+test_that("SharePoint methods work",
+{
+    site <- get_sharepoint_site(site_name, tenant=tenant, app=app)
+    expect_is(site, "ms_site")
 
     # drive -- functionality tested in test02
     drives <- site$list_drives()
@@ -41,6 +60,9 @@ test_that("SharePoint client works",
 
     drv <- site$get_drive()
     expect_is(drv, "ms_drive")
+
+    grp <- site$get_group()
+    expect_is(grp, "az_group")
 
     # list
     lists <- site$get_lists()
@@ -85,4 +107,11 @@ test_that("SharePoint client works",
     expect_silent(lst$delete_item(newid, confirm=FALSE))
     items4 <- lst$list_items()
     expect_identical(nrow(items), nrow(items4))
+
+    df <- data.frame(Title=c("item1", "item2", "item3"), stringsAsFactors=FALSE)
+    items5 <- lst$bulk_import(df)
+    expect_is(items5, "list")
+    expect_true(all(sapply(items5, inherits, "ms_list_item")))
+
+    expect_silent(lapply(items5, function(it) it$delete(confirm=FALSE)))
 })

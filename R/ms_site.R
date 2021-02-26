@@ -19,12 +19,13 @@
 #' - `list_subsites()`: List the subsites of this site.
 #' - `get_lists()`: Returns the lists that are part of this site.
 #' - `get_list(list_name, list_id)`: Returns a specific list, either by name or ID.
+#' - `get_group()`: Retrieve the Microsoft 365 group associated with the site, if it exists. A site that backs a private Teams channel will not have a group associated with it.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `get_sharepoint_site` method of the [ms_graph] or [az_group] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual site.
+#' Creating new objects of this class should be done via the `get_sharepoint_site` method of the [`ms_graph`] or [`az_group`] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual site.
 #'
 #' @seealso
-#' [ms_graph], [ms_drive], [az_user]
+#' [`ms_graph`], [`ms_drive`], [`az_user`]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [SharePoint sites API reference](https://docs.microsoft.com/en-us/graph/api/resources/sharepoint?view=graph-rest-1.0)
@@ -32,7 +33,7 @@
 #' @examples
 #' \dontrun{
 #'
-#' site <- sharepoint_site("https://mycompany.sharepoint.com/sites/my-site-name")
+#' site <- get_sharepoint_site("My site")
 #' site$list_drives()
 #' site$get_drive()
 #'
@@ -78,14 +79,22 @@ public=list(
 
     get_list=function(list_name=NULL, list_id=NULL)
     {
-        op <- if(is.null(list_name) && !is.null(list_id))
+        assert_one_arg(list_name, list_id, msg="Supply exactly one of list name or ID")
+        op <- if(!is.null(list_id))
             file.path("lists", list_id)
-        else if(!is.null(list_name) && is.null(list_id))
-            file.path("lists", curl::curl_escape(list_name))
-        else stop("Must supply either list name or ID")
+        else file.path("lists", curl::curl_escape(list_name))
 
         res <- self$do_operation(op)
         ms_list$new(self$token, self$tenant, res)
+    },
+
+    get_group=function()
+    {
+        filter <- sprintf("displayName eq '%s'", self$properties$displayName)
+        res <- call_graph_endpoint(self$token, "groups", options=list(`$filter`=filter))$value
+        if(length(res) != 1)
+            stop("Unable to get Microsoft 365 group", call.=FALSE)
+        az_group$new(self$token, self$tenant, res[[1]])
     },
 
     print=function(...)

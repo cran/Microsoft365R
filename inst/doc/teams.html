@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Hong Ooi" />
+
+
+<title>Teams</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Teams</h1>
+<h4 class="author">Hong Ooi</h4>
+
+
+
+<p>Microsoft365R is a simple yet powerful R interface to <a href="https://www.microsoft.com/en-us/microsoft-365">Microsoft 365</a> (formerly known as Office 365), leveraging the facilities provided by the <a href="https://cran.r-project.org/package=AzureGraph">AzureGraph</a> package. This vignette describes how to interact with <a href="https://www.microsoft.com/en-au/microsoft-teams/group-chat-software">Microsoft Teams</a>, including sending messages and transferring files.</p>
+<p>See the “Authenticating to Microsoft 365” vignette for more details on authentication if required.</p>
+<div id="teams" class="section level2">
+<h2>Teams</h2>
+<p>To access a team in Microsoft Teams, use the <code>get_team()</code> function and provide the team name or ID. You can also list the teams you’re in with <code>list_teams()</code>. These return objects of R6 class <code>ms_team</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">list_teams</span>()</span>
+<span id="cb1-2"><a href="#cb1-2"></a>team &lt;-<span class="st"> </span><span class="kw">get_team</span>(<span class="st">&quot;My team&quot;</span>)</span></code></pre></div>
+<p>The <code>ms_team</code> class has methods for working with channels and drives. Each team will generally have at least one drive, and possibly two: the default “Documents” drive, which is where uploaded files are stored, and the “Teams Wiki Data” drive, if the team has a wiki. Each team channel will have an associated folder in each drive, if at least one file has been uploaded to it.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># list the channels in a team (including private channels you&#39;re a member of)</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>team<span class="op">$</span><span class="kw">list_channels</span>()</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co"># get the primary channel for a team</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>team<span class="op">$</span><span class="kw">get_channel</span>()</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co"># get a specific channel</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>team<span class="op">$</span><span class="kw">get_channel</span>(<span class="st">&quot;My channel&quot;</span>)</span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co"># drives for a team</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>team<span class="op">$</span><span class="kw">list_drives</span>()</span>
+<span id="cb2-12"><a href="#cb2-12"></a>team<span class="op">$</span><span class="kw">get_drive</span>()</span></code></pre></div>
+<p>A drive is an <code>ms_drive</code> object, so the same methods apply as for OneDrives and SharePoint document libraries—see the “OneDrive and SharePoint” vignette for more information.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>drv &lt;-<span class="st"> </span>team<span class="op">$</span><span class="kw">get_drive</span>()</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># one folder per channel</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>drv<span class="op">$</span><span class="kw">list_files</span>()</span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># upload will appear in the Files tab of &quot;My channel&quot; in the Teams client</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>drv<span class="op">$</span><span class="kw">upload_file</span>(<span class="st">&quot;myfile.csv&quot;</span>, <span class="st">&quot;My channel/myfile.csv&quot;</span>)</span></code></pre></div>
+<p>Note that the drives mentioned here are actually the document libraries of an underlying SharePoint site: as far as file storage is concerned, you can think of Teams as simply an alternative interface to functionality provided by SharePoint. The <code>ms_team</code> class in fact has a <code>get_sharepoint_site()</code> method to retrieve the backing site, and you can access the same files via the site’s drive.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>site &lt;-<span class="st"> </span>team<span class="op">$</span><span class="kw">get_sharepoint_site</span>()</span>
+<span id="cb4-2"><a href="#cb4-2"></a>site_drv &lt;-<span class="st"> </span>site<span class="op">$</span><span class="kw">get_drive</span>()</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># the previous upload will also appear in this file listing</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>site_drv<span class="op">$</span><span class="kw">list_files</span>(<span class="st">&quot;My channel&quot;</span>)</span></code></pre></div>
+</div>
+<div id="channels" class="section level2">
+<h2>Channels</h2>
+<p>A team object has methods for listing, retrieving, creating and deleting channels. However you should not create and delete channels unnecessarily, since Teams tracks all channels ever created, even after you delete them. In turn, a channel object has methods for listing and sending messages, and uploading and deleting files.</p>
+<div id="channel-messages" class="section level3">
+<h3>Channel messages</h3>
+<p>Teams channels are semi-threaded. Getting the list of messages for a channel retrieves only the first message in each thread; to get an entire thread, you get the starting message and then retrieve the replies to it. Note that channels don’t have nested replies, so you can’t reply to a reply—only to the starting message.</p>
+<p>The body of a message is part of the list of properties returned from the host, and can be found in the <code>properties</code> field of the object. Other properties include metadata such as the author, date, list of attachments, etc.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>chan &lt;-<span class="st"> </span>team<span class="op">$</span><span class="kw">get_channel</span>()</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># by default, retrieve only the 50 most recent messages</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>msgs &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">list_messages</span>()</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co"># retrieve the 100 most recent messages</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="dv">100</span>)</span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co"># retrieve all messages: set n = infinity</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="ot">Inf</span>)</span>
+<span id="cb5-11"><a href="#cb5-11"></a></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co"># get the latest message by ID</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_message</span>(msgs[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>id)</span>
+<span id="cb5-14"><a href="#cb5-14"></a></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co"># body of the message</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>msg<span class="op">$</span>properties<span class="op">$</span>body</span>
+<span id="cb5-17"><a href="#cb5-17"></a></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co"># 10 most recent replies</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a>repl_list &lt;-<span class="st"> </span>msg<span class="op">$</span><span class="kw">list_replies</span>(<span class="dt">n=</span><span class="dv">10</span>)</span>
+<span id="cb5-20"><a href="#cb5-20"></a></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co"># body of an individual reply</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a>repl_list[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>body</span></code></pre></div>
+<p>You can send a message to a channel as plain text (the default) or HTML. For the latter, Teams imposes security restrictions on which HTML tags are allowed; you should limit your message to contain only basic formatting and no embedded scripts. You can also include files as attachments, or as inline images (JPEG or PNG only). For the latter, the message must be HTML and not plain text.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># sending messages to a channel</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello from R&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&lt;div&gt;Hello from &lt;em&gt;R&lt;/em&gt;&lt;/div&gt;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># send attachments by including a vector of filenames</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello with attachments&quot;</span>, <span class="dt">attachments=</span><span class="kw">c</span>(<span class="st">&quot;intro.md&quot;</span>, <span class="st">&quot;myfile.csv&quot;</span>))</span>
+<span id="cb6-7"><a href="#cb6-7"></a></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># images can be sent inline rather than as attachments: set content_type to &#39;html&#39;</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>, <span class="dt">inline=</span><span class="st">&quot;graph.png&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co"># send a reply to a message</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Starting a new thread in R&quot;</span>)</span>
+<span id="cb6-13"><a href="#cb6-13"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;Reply from R&quot;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14"></a></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co"># send a reply with an attachment</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;See attached file&quot;</span>, <span class="dt">attachments=</span><span class="st">&quot;reply.md&quot;</span>)</span></code></pre></div>
+<p>Currently, Microsoft365R only supports messaging in channels. Support for chats between individuals may come later.</p>
+</div>
+<div id="channel-files" class="section level3">
+<h3>Channel files</h3>
+<p>Uploading a file to a channel will place it in the channel’s drive folder. Note that message attachments are actually uploaded to the channel’s folder with the message then including a link to the uploaded file.</p>
+<p>The channel object itself provides convenience functions to list, upload and download files. It also provides a <code>get_folder()</code> method to retrieve the folder for the channel, as an <code>ms_drive_item</code> object; this object has more general methods for working with files. Again, see the “OneDrive and SharePoint” vignette for more information on drive item objects.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># files for the channel</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>chan<span class="op">$</span><span class="kw">list_files</span>()</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># upload a file to the channel</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>chan<span class="op">$</span><span class="kw">upload_file</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co"># open the uploaded document for editing in Word Online, then download it again</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>chan_folder &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_folder</span>()</span>
+<span id="cb7-9"><a href="#cb7-9"></a>item &lt;-<span class="st"> </span>chan_folder<span class="op">$</span><span class="kw">get_item</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10"></a>item<span class="op">$</span><span class="kw">open</span>()</span>
+<span id="cb7-11"><a href="#cb7-11"></a>item<span class="op">$</span><span class="kw">download</span>(<span class="dt">overwrite=</span><span class="ot">TRUE</span>)</span>
+<span id="cb7-12"><a href="#cb7-12"></a></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co"># create a shareable link (read-only, expires in 7 days)</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>item<span class="op">$</span><span class="kw">create_share_link</span>()</span></code></pre></div>
+</div>
+<div id="private-channels" class="section level3">
+<h3>Private channels</h3>
+<p>Private channels function much the same way as regular public channels, and the methods described above should also work with them. The main difference is that a private channel’s files are stored in a separate SharePoint site to the public channels, so any files you upload to the private channel won’t appear in the file listings for the main site.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
