@@ -307,19 +307,27 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="authentication" class="section level2">
 <h2>Authentication</h2>
-<p>The first time you call one of the Microsoft365R client functions, it will use your Internet browser to authenticate you with Azure Active Directory, in a similar manner to other web apps. You will get a dialog box asking for permission to access your information. Your login information is saved, so you should only have to authenticate once.</p>
+<p>To authenticate with Azure Active Directory, simply call one of the Microsoft365R client functions.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">get_personal_onedrive</span>()</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">get_business_onedrive</span>()</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">get_personal_outlook</span>()</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">get_business_outlook</span>()</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">get_sharepoint_site</span>()</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">get_team</span>()</span></code></pre></div>
+<p>Notice that you do <em>not</em> provide your username and password in the function call. Instead, Microsoft365R will use your Internet browser to obtain your credentials, in a similar manner to other web apps. You will get a dialog box asking for permission to access your information. Your login information is saved, so you should only have to authenticate once.</p>
 <div id="using-the-device-code-flow" class="section level3">
 <h3>Using the device code flow</h3>
-<p>Microsoft365R’s default authentication method assumes that your R session can access the Internet via a browser. If this is not the case, for example if you are using Databricks or RStudio Server, you can switch to the <em>device code</em> flow by passing the <code>auth_type=&quot;device_code&quot;</code> argument:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">get_personal_onedrive</span>(<span class="dt">auth_type=</span><span class="st">&quot;device_code&quot;</span>)</span></code></pre></div>
-<p>This will print an access code and URL on the screen. You login to the URL using a browser on another device, and type in the code. Once this is done, Microsoft365R will complete the authentication process.</p>
+<p>The default authentication method assumes that your R session can access the Internet via a browser. If this is not the case, for example if you are using Databricks or RStudio Server, you can switch to the <em>device code</em> flow by passing the <code>auth_type=&quot;device_code&quot;</code> argument:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">get_personal_onedrive</span>(<span class="dt">auth_type=</span><span class="st">&quot;device_code&quot;</span>)</span></code></pre></div>
+<p>This will print an access code and URL on the screen. You login to the URL using a browser on another device, and type in the code. Once this is done, Microsoft365R will complete the authentication process. Again, you do <em>not</em> provide your username and password in the function call.</p>
 </div>
 <div id="specifying-the-tenant" class="section level3">
 <h3>Specifying the tenant</h3>
 <p>When authenticating to the Microsoft 365 Business services, Microsoft365R will detect your Azure Active Directory tenant from your logged-in credentials in the browser. Sometimes this doesn’t work, in particular if you are logged in with a personal account that is also a guest account in a tenant. To solve this, specify your tenant name with the <code>tenant</code> argument:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">get_business_onedrive</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">get_team</span>(<span class="st">&quot;My team&quot;</span>, <span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">get_business_onedrive</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">get_business_outlook</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">get_team</span>(<span class="st">&quot;My team&quot;</span>, <span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="app-registration-and-approvals" class="section level2">
@@ -331,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Once the app has been registered, you can pass the app ID to Microsoft365R in a couple of ways.</p>
 <ul>
 <li><p>The client functions can accept the app ID as the <code>app</code> argument:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">get_business_onedrive</span>(<span class="dt">app=</span><span class="st">&quot;myappid&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">get_business_onedrive</span>(<span class="dt">app=</span><span class="st">&quot;myappid&quot;</span>)</span></code></pre></div></li>
 <li><p>Alternatively, if the environment variable <code>CLIMICROSOFT365_AADAPPID</code> is set, Microsoft365R will use its value as the app ID for authenticating to the Microsoft 365 Business services (Teams, SharePoint and OneDrive for Business). This environment variable is defined by the <a href="https://pnp.github.io/cli-microsoft365/">CLI for Microsoft365</a>, an open source tool for managing Microsoft 365 accounts; you thus can reuse the same app ID for both the CLI and Microsoft365R.</p></li>
 </ul>
 </div>
@@ -339,14 +347,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>Using other app registrations: last-resort workarounds</h3>
 <p>The above methods are the <strong>recommended solutions</strong> to dealing with access restrictions on Microsoft365R. If they are not feasible, it’s possible to work around these issues by piggybacking on other apps:</p>
 <ul>
-<li><p>By setting the R option <code>microsoft365r_use_cli_app_id</code> to a non-NULL value, Microsoft365R will authenticate using the app ID for the CLI for Microsoft 365—effectively pretending to be the CLI itself. Technically this app still requires admin approval, but it is in widespread use and is maintained by Microsoft employees, and so may already be allowed in your organisation. The CLI supports most Microsoft 365 services except for personal OneDrive.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">options</span>(<span class="dt">microsoft365r_use_cli_app_id=</span><span class="ot">TRUE</span>)</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">get_team</span>(<span class="st">&quot;My team&quot;</span>)</span></code></pre></div></li>
-<li><p>You can authenticate using the Azure CLI’s app ID: <code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code>. This is a first-party Microsoft app, and hence can be used in any tenant. It is not intended for use with Microsoft 365, so not all functionality may be supported; however it should be possible to access Teams and SharePoint sites (but not personal OneDrive or OneDrive for Business).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="dt">app=</span><span class="st">&quot;04b07795-8ddb-461a-bbee-02f9e1bf7b46&quot;</span>)</span></code></pre></div></li>
+<li><p>By setting the R option <code>microsoft365r_use_cli_app_id</code> to a non-NULL value, Microsoft365R will authenticate using the app ID for the CLI for Microsoft 365—effectively pretending to be the CLI itself. Technically this app still requires admin approval, but it is in widespread use and is maintained by Microsoft employees, and so may already be allowed in your organisation. The CLI supports most Microsoft 365 services, but not Outlook or personal OneDrive.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">options</span>(<span class="dt">microsoft365r_use_cli_app_id=</span><span class="ot">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">get_team</span>(<span class="st">&quot;My team&quot;</span>)</span></code></pre></div></li>
+<li><p>You can authenticate using the Azure CLI’s app ID: <code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code>. This is a first-party Microsoft app, and hence can be used in any tenant. It is not intended for use with Microsoft 365, so not all functionality may be supported; however it should be possible to access Teams and SharePoint sites (but not Outlook, personal OneDrive or OneDrive for Business).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="dt">app=</span><span class="st">&quot;04b07795-8ddb-461a-bbee-02f9e1bf7b46&quot;</span>)</span></code></pre></div></li>
 </ul>
 <p>Be warned that these workarounds may draw the attention of your admin!</p>
 </div>
+</div>
+<div id="other-issues" class="section level2">
+<h2>Other issues</h2>
+<p>The AzureR packages save your login sessions so that you don’t need to reauthenticate each time. If you’re experiencing authentication failures, you can try clearing the saved data by running the following code:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>AzureAuth<span class="op">::</span><span class="kw">clean_token_directory</span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a>AzureGraph<span class="op">::</span><span class="kw">delete_graph_login</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
 </div>
 
 

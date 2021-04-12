@@ -16,13 +16,13 @@ tok <- try(AzureAuth::get_azure_token(
 if(inherits(tok, "try-error"))
     skip("OneDrive for Business tests skipped: no access to tenant")
 
+gr <- AzureGraph::ms_graph$new(token=tok)
+drv <- try(call_graph_endpoint(tok, "me/drive"), silent=TRUE)
+if(inherits(drv, "try-error"))
+    skip("OneDrive for Business tests skipped: service not available")
+
 test_that("OneDrive for Business works",
 {
-    gr <- AzureGraph::ms_graph$new(token=tok)
-    drv <- try(gr$get_user()$get_drive(), silent=TRUE)
-    if(inherits(drv, "try-error"))
-        skip("OneDrive for Business tests skipped: service not available")
-
     od <- get_business_onedrive(tenant=tenant)
     expect_is(od, "ms_drive")
 
@@ -142,4 +142,27 @@ test_that("Methods work with filenames with special characters",
     expect_silent(item <- od$get_item(basename(test_name)))
     expect_true(item$properties$name == basename(test_name))
     expect_silent(item$delete(confirm=FALSE))
+})
+
+
+test_that("Nested folder creation works",
+{
+    od <- get_business_onedrive()
+
+    f1 <- make_name(10)
+    f2 <- make_name(10)
+    f3 <- make_name(10)
+
+    it12 <- od$create_folder(file.path(f1, f2))
+    expect_is(it12, "ms_drive_item")
+
+    it1 <- od$get_item(f1)
+    expect_is(it1, "ms_drive_item")
+
+    it123 <- it1$create_folder(file.path(f2, f3))
+    expect_is(it123, "ms_drive_item")
+
+    expect_silent(it123$delete(confirm=FALSE))
+    expect_silent(it12$delete(confirm=FALSE))
+    expect_silent(it1$delete(confirm=FALSE))
 })

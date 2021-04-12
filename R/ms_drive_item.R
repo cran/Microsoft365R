@@ -191,12 +191,14 @@ public=list(
     create_folder=function(path)
     {
         private$assert_is_folder()
+
+        # see https://stackoverflow.com/a/66686842/474349
+        op <- private$make_absolute_path(path)
         body <- list(
-            name=enc2utf8(path),
             folder=named_list(),
             `@microsoft.graph.conflictBehavior`="fail"
         )
-        res <- self$do_operation("children", body=body, http_verb="POST")
+        res <- call_graph_endpoint(self$token, op, body=body, http_verb="PATCH")
         invisible(ms_drive_item$new(self$token, self$tenant, res))
     },
 
@@ -225,7 +227,7 @@ public=list(
             headers <- httr::add_headers(
                 `Content-Length`=thisblock,
                 `Content-Range`=sprintf("bytes %.0f-%.0f/%.0f",
-                    next_blockstart, next_blockstart + next_blocksize - 1, size)
+                    next_blockstart, next_blockstart + thisblock - 1, size)
             )
             res <- httr::PUT(upload_dest, headers, body=body)
             httr::stop_for_status(res)
@@ -242,7 +244,6 @@ public=list(
     download=function(dest=self$properties$name, overwrite=FALSE)
     {
         private$assert_is_file()
-        filepath <- file.path(self$parentReference$path, self$properties$name)
         res <- self$do_operation("content", config=httr::write_disk(dest, overwrite=overwrite),
                                  http_status_handler="pass")
         if(httr::status_code(res) >= 300)
@@ -271,6 +272,8 @@ private=list(
 
     make_absolute_path=function(dest)
     {
+        if(dest == ".")
+            dest <- ""
         parent <- self$properties$parentReference
         name <- self$properties$name
         op <- if(name == "root")
@@ -283,7 +286,7 @@ private=list(
                 parent$path <- sprintf("/drives/%s/root:", parent$driveId)
             file.path(parent$path, name)
         }
-        utils::URLencode(enc2utf8(file.path(op, dest)))
+        utils::URLencode(enc2utf8(sub("/$", "", file.path(op, dest))))
     },
 
     assert_is_folder=function()
