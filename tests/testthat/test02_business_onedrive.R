@@ -29,8 +29,8 @@ test_that("OneDrive for Business works",
     od2 <- get_business_onedrive(tenant=tenant, app=app)
     expect_is(od2, "ms_drive")
 
-    ls <- od$list_items()
-    expect_is(ls, "data.frame")
+    lst <- od$list_items()
+    expect_is(lst, "data.frame")
 
     newfolder <- make_name()
     expect_silent(od$create_folder(newfolder))
@@ -45,6 +45,12 @@ test_that("OneDrive for Business works",
 
     item <- od$get_item(dest)
     expect_is(item, "ms_drive_item")
+
+    pager <- od$list_files(newfolder, filter=sprintf("name eq '%s'", basename(src)), n=NULL)
+    expect_is(pager, "ms_graph_pager")
+    lst1 <- pager$value
+    expect_is(lst1, "data.frame")
+    expect_identical(nrow(lst1), 1L)
 
     expect_silent(od$set_item_properties(dest, name="newname"))
     expect_silent(item$sync_fields())
@@ -145,7 +151,7 @@ test_that("Methods work with filenames with special characters",
 })
 
 
-test_that("Nested folder creation works",
+test_that("Nested folder creation/deletion works",
 {
     od <- get_business_onedrive()
 
@@ -159,10 +165,10 @@ test_that("Nested folder creation works",
     it1 <- od$get_item(f1)
     expect_is(it1, "ms_drive_item")
 
+    replicate(30, it1$upload(write_file()))
+
     it123 <- it1$create_folder(file.path(f2, f3))
     expect_is(it123, "ms_drive_item")
 
-    expect_silent(it123$delete(confirm=FALSE))
-    expect_silent(it12$delete(confirm=FALSE))
-    expect_silent(it1$delete(confirm=FALSE))
+    expect_silent(it1$delete(confirm=FALSE, by_item=TRUE))
 })

@@ -14,7 +14,10 @@ get_drive(drive_id)
 get_drive(drive_id = NULL)
 
 ## R6 method for class 'az_group'
-get_drive(drive_id = NULL)
+get_drive(drive_name = NULL, drive_id = NULL)
+
+## R6 method for class 'az_group'
+get_plan(plan_title = NULL, plan_id = NULL)
 
 ## R6 method for class 'ms_graph'
 get_sharepoint_site(site_url = NULL, site_id = NULL)
@@ -29,26 +32,30 @@ get_team(team_id = NULL)
 get_team()
 
 ## R6 method for class 'az_user'
-list_drives()
+list_drives(filter = NULL, n = Inf)
 
 ## R6 method for class 'az_group'
-list_drives()
+list_drives(filter = NULL, n = Inf)
+
+## R6 method for class 'az_group'
+list_plans(filter = NULL, n = Inf)
 
 ## R6 method for class 'az_user'
-list_sharepoint_sites(filter = NULL)
+list_sharepoint_sites(filter = NULL, n = Inf)
 
 ## R6 method for class 'az_user'
-list_teams(filter = NULL)
+list_teams(filter = NULL, n = Inf)
 }
 }
 
 \section{Arguments}{
 
 \itemize{
-\item \code{drive_id}: For \code{get_drive}, the ID of the drive or shared document library. For the \code{az_user} and \code{az_group} methods, if this is NULL the default drive/document library is returned.
+\item \code{drive_name},\code{drive_id}: For \code{get_drive}, the name or ID of the drive or shared document library. Note that only the \code{az_group} method  has the \code{drive_name} argument, as user drives do not have individual names (and most users will only have one drive anyway). For the \code{az_user} and \code{az_group} methods, leaving the argument(s) blank will return the default drive/document library.
 \item \code{site_url},\code{site_id}: For \code{ms_graph$get_sharepoint_site()}, the URL and ID of the site. Provide one or the other, but not both.
 \item \code{team_name},\code{team_id}: For \code{az_user$get_team()}, the name and ID of the site. Provide one or the other, but not both. For \code{ms_graph$get_team}, you must provide the team ID.
-\item \code{filter}: For \code{az_user$list_sharepoint_sites()} and \code{az_user$list_teams()}, an optional OData expression to filter the list.
+\item \code{plan_title},\code{plan_id}: For \code{az_group$get_plan()}, the title and ID of the site. Provide one or the other, but not both.
+\item \verb{filter, n}: See 'List methods' below.
 }
 }
 
@@ -58,9 +65,18 @@ list_teams(filter = NULL)
 
 \code{get_drive} retrieves a OneDrive or shared document library, and \code{list_drives} retrieves all such drives/libraries that the user or group has access to. Whether these are personal or business drives depends on the tenant that was specified in \code{AzureGraph::get_graph_login()}/\code{create_graph_login()}: if this was "consumers" or "9188040d-6c67-4c5b-b112-36a304b66dad" (the equivalent GUID), it will be the personal OneDrive. See the examples below.
 
+\code{get_plan} retrieves a plan (not to be confused with a Todo task list), and \code{list_plans} retrieves all plans for a group.
+
 \code{get_team} retrieves a team. The method for the Graph client class requires the team ID. The method for the \code{az_user} class requires either the team name or ID. The method for the \code{az_group} class retrieves the team associated with the group, if it exists.
 
-Note that Teams, SharePoint and OneDrive for Business require a Microsoft 365 Business license, and are available for organisational tenants only.
+Note that Teams, SharePoint and OneDrive for Business require a Microsoft 365 Business license, and are available for organisational tenants only. Similarly, only Microsoft 365 groups can have associated sites/teams/plans/drives, not any other kind of group.
+}
+
+\section{List methods}{
+
+All \verb{list_*} methods have \code{filter} and \code{n} arguments to limit the number of results. The former should be an \href{https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter}{OData expression} as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are \code{filter=NULL} and \code{n=Inf}. If \code{n=NULL}, the \code{ms_graph_pager} iterator object is returned instead to allow manual iteration over the results.
+
+Support in the underlying Graph API for OData queries is patchy. Not all endpoints that return lists of objects support filtering, and if they do, they may not allow all of the defined operators. If your filtering expression results in an error, you can carry out the operation without filtering and then filter the results on the client side.
 }
 
 \section{Value}{
@@ -68,6 +84,8 @@ Note that Teams, SharePoint and OneDrive for Business require a Microsoft 365 Bu
 For \code{get_sharepoint_site}, an object of class \code{ms_site}.
 
 For \code{get_drive}, an object of class \code{ms_drive}. For \code{list_drives}, a list of \code{ms_drive} objects.
+
+For \code{get_plan}, an object of class \code{ms_plan}. For \code{list_plans}, a list of \code{ms_plan} objects.
 
 For \code{get_team}, an object of class \code{ms_team}. For \code{list_teams}, a list of \code{ms_team} objects.
 }
@@ -98,5 +116,5 @@ grp$get_drive()
 }
 }
 \seealso{
-\code{\link{ms_site}}, \code{\link{ms_drive}}, \code{\link{az_user}}, \code{\link{az_group}}
+\code{\link{ms_site}}, \code{\link{ms_drive}}, \code{\link{ms_plan}}, \code{\link{ms_team}}, \code{\link{az_user}}, \code{\link{az_group}}
 }
