@@ -1,13 +1,14 @@
-aa854260322d510a1982079b3e925e9f *DESCRIPTION
+5de5f9e4e7edf8fb6199bf11337327b6 *DESCRIPTION
 47daa2f0395cbf1a583e857133802618 *LICENSE
-a76917fb724a3b6bf24836823c32ba3f *NAMESPACE
-f60ec4a3fb239ea0714b02109d03f110 *NEWS.md
-1393ffb01b6d9ab9ad15b8e998897d8c *R/Microsoft365R.R
+1cea1897810e5451ac7549ebbd2e5365 *NAMESPACE
+0f21ff68755f36ddd3ccf848c8e80e87 *NEWS.md
+9f7c6e31e192ed517bf7f58267c3fc08 *R/Microsoft365R.R
 3c7bbbbbd452ba1a6811c9d09d43239f *R/add_methods.R
 81bca8257b45fb40dd532b6ce6ad5bfe *R/build_chatmessage_body.R
 f199fc157b98dbbb128850e7bb0c3f17 *R/build_email_request.R
 c0671ff663d51764641413ae511e828c *R/client.R
 32a5fce2d666fd1164059a047f48d183 *R/client_deprecated.R
+ea198018f4b9f169307883e6fdb2e4eb *R/make_basic_list.R
 a58f9eaa9a82be3898c00b8fd7c59ee7 *R/make_email_attachments.R
 d283f46221f37941e9fb9ab102d5f5e4 *R/ms_channel.R
 1f8b2466530f55e8b3dbcc04c1095e91 *R/ms_chat_message.R
@@ -29,8 +30,8 @@ e8f23426cfebc534a7653869d379979d *R/ms_team_member.R
 ae4866d61671fa696f440fcce3b5244e *README.md
 54ff433305babba8b8d650a1cb70050d *build/vignette.rds
 c6bc807204ced138dcc2ac5ff0d6a809 *inst/app_registration.md
-497994bbf9fb47ccd92a8bf070fd4cde *inst/doc/auth.Rmd
-a5cbd0e0ad3597cb207664c29db1f52b *inst/doc/auth.html
+e7b91c60426d5f9ed69a85f82a78f220 *inst/doc/auth.Rmd
+834fdf101cbc55283257fd50be179851 *inst/doc/auth.html
 8fabae11d3701f18c531ddcf16f76bee *inst/doc/od_sp.Rmd
 c2d1b2859ce9c97af1e3919deeb6372b *inst/doc/od_sp.html
 ede3d8b4b818eb0c4e0194886127be76 *inst/doc/outlook.Rmd
@@ -41,6 +42,7 @@ a32a5216edad326f504da829f1ae8e7b *inst/doc/teams.html
 86948344a96f4cecb7c0a30ce20a9012 *man/add_methods.Rd
 3a029272d19ea8ad8df09f30e98ea824 *man/client.Rd
 7f3ff836fb104101a54d933040d71ba0 *man/figures/logo.png
+59f09805649cef0ca6fee65a07c5868f *man/make_basic_list.Rd
 b900ea91b50dc17133c3a0916f3055d4 *man/ms_channel.Rd
 8627c07cb446af1e0c21578f40641b40 *man/ms_chat_message.Rd
 0d1e3af5005e5e374a5f6c16d574baea *man/ms_drive.Rd
@@ -73,7 +75,7 @@ afdc1212d8d54b40be9b2485b9427847 *tests/testthat/test05a_outlook_folder.R
 c6864f1e410df39ef9c69cf1a63735e5 *tests/testthat/test05d_outlook_send.R
 006c764b458cdff1a198bc1e9fb0e36c *tests/testthat/test05e_outlook_copymove.R
 45dfa2ee98ebe88df76cb4a75431daa5 *tests/testthat/test06_planner.R
-497994bbf9fb47ccd92a8bf070fd4cde *vignettes/auth.Rmd
+e7b91c60426d5f9ed69a85f82a78f220 *vignettes/auth.Rmd
 8fabae11d3701f18c531ddcf16f76bee *vignettes/od_sp.Rmd
 ede3d8b4b818eb0c4e0194886127be76 *vignettes/outlook.Rmd
 40df9f0f8f3b98d70d83b5b25233be70 *vignettes/teams.Rmd
