@@ -305,7 +305,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p>Microsoft365R is a simple yet powerful R interface to <a href="https://www.microsoft.com/en-us/microsoft-365">Microsoft 365</a> (formerly known as Office 365), leveraging the facilities provided by the <a href="https://cran.r-project.org/package=AzureGraph">AzureGraph</a> package. This vignette describes how to interact with <a href="https://www.microsoft.com/en-au/microsoft-teams/group-chat-software">Microsoft Teams</a>, including sending messages and transferring files.</p>
+<p>Microsoft365R is a simple yet powerful R interface to <a href="https://www.microsoft.com/en-us/microsoft-365">Microsoft 365</a> (formerly known as Office 365), leveraging the facilities provided by the <a href="https://cran.r-project.org/package=AzureGraph">AzureGraph</a> package. This vignette describes how to interact with <a href="https://www.microsoft.com/en-au/microsoft-teams/group-chat-software">Microsoft Teams</a>.</p>
 <p>See the “Authenticating to Microsoft 365” vignette for more details on authentication if required.</p>
 <div id="teams" class="section level2">
 <h2>Teams</h2>
@@ -339,78 +339,123 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb4-3"><a href="#cb4-3"></a></span>
 <span id="cb4-4"><a href="#cb4-4"></a><span class="co"># the previous upload will also appear in this file listing</span></span>
 <span id="cb4-5"><a href="#cb4-5"></a>site_drv<span class="op">$</span><span class="kw">list_files</span>(<span class="st">&quot;My channel&quot;</span>)</span></code></pre></div>
+<p>You can also retrieve the team members with the <code>list_members()</code> and <code>get_member()</code> methods. For the latter, you can retrieve a member using either their display name, email address, or internal ID.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>team<span class="op">$</span><span class="kw">list_members</span>()</span>
+<span id="cb5-2"><a href="#cb5-2"></a>team<span class="op">$</span><span class="kw">get_member</span>(<span class="st">&quot;Joe Smith&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>team<span class="op">$</span><span class="kw">get_member</span>(<span class="dt">email=</span><span class="st">&quot;joesmith@mytenant.com&quot;</span>)</span></code></pre></div>
 </div>
 <div id="channels" class="section level2">
 <h2>Channels</h2>
-<p>A team object has methods for listing, retrieving, creating and deleting channels. However you should not create and delete channels unnecessarily, since Teams tracks all channels ever created, even after you delete them. In turn, a channel object has methods for listing and sending messages, and uploading and deleting files.</p>
+<p>A team object has methods for listing, retrieving, creating and deleting channels. However you should not create and delete channels unnecessarily, since Teams tracks all channels ever created, even after you delete them. In turn, a channel object has methods for retrieving members, listing and sending messages, and uploading and deleting files.</p>
 <div id="channel-messages" class="section level3">
 <h3>Channel messages</h3>
 <p>Teams channels are semi-threaded. Getting the list of messages for a channel retrieves only the first message in each thread; to get an entire thread, you get the starting message and then retrieve the replies to it. Note that channels don’t have nested replies, so you can’t reply to a reply—only to the starting message.</p>
 <p>The body of a message is part of the list of properties returned from the host, and can be found in the <code>properties</code> field of the object. Other properties include metadata such as the author, date, list of attachments, etc.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>chan &lt;-<span class="st"> </span>team<span class="op">$</span><span class="kw">get_channel</span>()</span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># by default, retrieve only the 50 most recent messages</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>msgs &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">list_messages</span>()</span>
-<span id="cb5-5"><a href="#cb5-5"></a></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co"># retrieve the 100 most recent messages</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="dv">100</span>)</span>
-<span id="cb5-8"><a href="#cb5-8"></a></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co"># retrieve all messages: set n = infinity</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="ot">Inf</span>)</span>
-<span id="cb5-11"><a href="#cb5-11"></a></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co"># get the latest message by ID</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_message</span>(msgs[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>id)</span>
-<span id="cb5-14"><a href="#cb5-14"></a></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co"># body of the message</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a>msg<span class="op">$</span>properties<span class="op">$</span>body</span>
-<span id="cb5-17"><a href="#cb5-17"></a></span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="co"># 10 most recent replies</span></span>
-<span id="cb5-19"><a href="#cb5-19"></a>repl_list &lt;-<span class="st"> </span>msg<span class="op">$</span><span class="kw">list_replies</span>(<span class="dt">n=</span><span class="dv">10</span>)</span>
-<span id="cb5-20"><a href="#cb5-20"></a></span>
-<span id="cb5-21"><a href="#cb5-21"></a><span class="co"># body of an individual reply</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a>repl_list[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>body</span></code></pre></div>
-<p>You can send a message to a channel as plain text (the default) or HTML. For the latter, Teams imposes security restrictions on which HTML tags are allowed; you should limit your message to contain only basic formatting and no embedded scripts. You can also include files as attachments, or as inline images (JPEG or PNG only). For the latter, the message must be HTML and not plain text.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># sending messages to a channel</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello from R&quot;</span>)</span>
-<span id="cb6-3"><a href="#cb6-3"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&lt;div&gt;Hello from &lt;em&gt;R&lt;/em&gt;&lt;/div&gt;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span>
-<span id="cb6-4"><a href="#cb6-4"></a></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># send attachments by including a vector of filenames</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello with attachments&quot;</span>, <span class="dt">attachments=</span><span class="kw">c</span>(<span class="st">&quot;intro.md&quot;</span>, <span class="st">&quot;myfile.csv&quot;</span>))</span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># images can be sent inline rather than as attachments: set content_type to &#39;html&#39;</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>, <span class="dt">inline=</span><span class="st">&quot;graph.png&quot;</span>)</span>
-<span id="cb6-10"><a href="#cb6-10"></a></span>
-<span id="cb6-11"><a href="#cb6-11"></a><span class="co"># send a reply to a message</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Starting a new thread in R&quot;</span>)</span>
-<span id="cb6-13"><a href="#cb6-13"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;Reply from R&quot;</span>)</span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>chan &lt;-<span class="st"> </span>team<span class="op">$</span><span class="kw">get_channel</span>()</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># by default, retrieve only the 50 most recent messages</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>msgs &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">list_messages</span>()</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co"># retrieve the 100 most recent messages</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="dv">100</span>)</span>
+<span id="cb6-8"><a href="#cb6-8"></a></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co"># retrieve all messages: set n = infinity</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>chan<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="ot">Inf</span>)</span>
+<span id="cb6-11"><a href="#cb6-11"></a></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co"># get the latest message by ID</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_message</span>(msgs[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>id)</span>
 <span id="cb6-14"><a href="#cb6-14"></a></span>
-<span id="cb6-15"><a href="#cb6-15"></a><span class="co"># send a reply with an attachment</span></span>
-<span id="cb6-16"><a href="#cb6-16"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;See attached file&quot;</span>, <span class="dt">attachments=</span><span class="st">&quot;reply.md&quot;</span>)</span></code></pre></div>
-<p>Currently, Microsoft365R only supports messaging in channels. Support for chats between individuals may come later.</p>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co"># body of the message</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>msg<span class="op">$</span>properties<span class="op">$</span>body</span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co"># 10 most recent replies</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>repl_list &lt;-<span class="st"> </span>msg<span class="op">$</span><span class="kw">list_replies</span>(<span class="dt">n=</span><span class="dv">10</span>)</span>
+<span id="cb6-20"><a href="#cb6-20"></a></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co"># body of an individual reply</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>repl_list[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>body</span></code></pre></div>
+<p>You can send a message to a channel as plain text (the default) or HTML. For the latter, Teams imposes security restrictions on which HTML tags are allowed; you should limit your message to contain only basic formatting and no embedded scripts. You can also include files as attachments, or as inline images (JPEG or PNG only). Similarly, you can <span class="citation">@mention</span> a team, channel, or an individual team or channel member. For the latter, the message must be HTML and not plain text.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># sending messages to a channel</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello from R&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&lt;div&gt;Hello from &lt;em&gt;R&lt;/em&gt;&lt;/div&gt;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># send attachments by including a vector of filenames</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello with attachments&quot;</span>, <span class="dt">attachments=</span><span class="kw">c</span>(<span class="st">&quot;intro.md&quot;</span>, <span class="st">&quot;myfile.csv&quot;</span>))</span>
+<span id="cb7-7"><a href="#cb7-7"></a></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co"># images can be sent inline rather than as attachments: set content_type to &#39;html&#39;</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>, <span class="dt">inline=</span><span class="st">&quot;graph.png&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10"></a></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co"># send a reply to a message</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a>msg &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Starting a new thread in R&quot;</span>)</span>
+<span id="cb7-13"><a href="#cb7-13"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;Reply from R&quot;</span>)</span>
+<span id="cb7-14"><a href="#cb7-14"></a></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="co"># send a reply with an attachment</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;See attached file&quot;</span>, <span class="dt">attachments=</span><span class="st">&quot;reply.md&quot;</span>)</span>
+<span id="cb7-17"><a href="#cb7-17"></a></span>
+<span id="cb7-18"><a href="#cb7-18"></a><span class="co"># mention a channel member</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a>usr &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_member</span>(<span class="st">&quot;Joe Smith&quot;</span>)</span>
+<span id="cb7-20"><a href="#cb7-20"></a>msg<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;FYI Joe&quot;</span>, <span class="dt">mentions=</span>usr, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span></code></pre></div>
 </div>
 <div id="channel-files" class="section level3">
 <h3>Channel files</h3>
 <p>Uploading a file to a channel will place it in the channel’s drive folder. Note that message attachments are actually uploaded to the channel’s folder with the message then including a link to the uploaded file.</p>
 <p>The channel object itself provides convenience functions to list, upload and download files. It also provides a <code>get_folder()</code> method to retrieve the folder for the channel, as an <code>ms_drive_item</code> object; this object has more general methods for working with files. Again, see the “OneDrive and SharePoint” vignette for more information on drive item objects.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># files for the channel</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a>chan<span class="op">$</span><span class="kw">list_files</span>()</span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># upload a file to the channel</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a>chan<span class="op">$</span><span class="kw">upload_file</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
-<span id="cb7-6"><a href="#cb7-6"></a></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co"># open the uploaded document for editing in Word Online, then download it again</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>chan_folder &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_folder</span>()</span>
-<span id="cb7-9"><a href="#cb7-9"></a>item &lt;-<span class="st"> </span>chan_folder<span class="op">$</span><span class="kw">get_item</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
-<span id="cb7-10"><a href="#cb7-10"></a>item<span class="op">$</span><span class="kw">open</span>()</span>
-<span id="cb7-11"><a href="#cb7-11"></a>item<span class="op">$</span><span class="kw">download</span>(<span class="dt">overwrite=</span><span class="ot">TRUE</span>)</span>
-<span id="cb7-12"><a href="#cb7-12"></a></span>
-<span id="cb7-13"><a href="#cb7-13"></a><span class="co"># create a shareable link (read-only, expires in 7 days)</span></span>
-<span id="cb7-14"><a href="#cb7-14"></a>item<span class="op">$</span><span class="kw">create_share_link</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># files for the channel</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>chan<span class="op">$</span><span class="kw">list_files</span>()</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># upload a file to the channel</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>chan<span class="op">$</span><span class="kw">upload_file</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># open the uploaded document for editing in Word Online, then download it again</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>chan_folder &lt;-<span class="st"> </span>chan<span class="op">$</span><span class="kw">get_folder</span>()</span>
+<span id="cb8-9"><a href="#cb8-9"></a>item &lt;-<span class="st"> </span>chan_folder<span class="op">$</span><span class="kw">get_item</span>(<span class="st">&quot;myfile.docx&quot;</span>)</span>
+<span id="cb8-10"><a href="#cb8-10"></a>item<span class="op">$</span><span class="kw">open</span>()</span>
+<span id="cb8-11"><a href="#cb8-11"></a>item<span class="op">$</span><span class="kw">download</span>(<span class="dt">overwrite=</span><span class="ot">TRUE</span>)</span>
+<span id="cb8-12"><a href="#cb8-12"></a></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co"># create a shareable link (read-only, expires in 7 days)</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a>item<span class="op">$</span><span class="kw">create_share_link</span>()</span></code></pre></div>
 </div>
 <div id="private-channels" class="section level3">
 <h3>Private channels</h3>
 <p>Private channels function much the same way as regular public channels, and the methods described above should also work with them. The main difference is that a private channel’s files are stored in a separate SharePoint site to the public channels, so any files you upload to the private channel won’t appear in the file listings for the main site.</p>
 </div>
+</div>
+<div id="chats" class="section level2">
+<h2>Chats</h2>
+<p>Microsoft365R also supports messaging in chats. There are three types of chats: group, meeting and one-on-one, but the same interface applies to all types. To access the chats that you are part of, use the <code>list_chats()</code> function. You can also retrieve a specific chat with <code>get_chat()</code>, passing it the chat ID.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>chats &lt;-<span class="st"> </span><span class="kw">list_chats</span>()</span>
+<span id="cb9-2"><a href="#cb9-2"></a>chat_id &lt;-<span class="st"> </span>chats[[<span class="dv">1</span>]]<span class="op">$</span>properties<span class="op">$</span>id</span>
+<span id="cb9-3"><a href="#cb9-3"></a>chat &lt;-<span class="st"> </span><span class="kw">get_chat</span>(chat_id)</span></code></pre></div>
+<p>In general, the functionality is very similar to messaging in channels:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># by default, retrieve only the 50 most recent messages</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>msgs &lt;-<span class="st"> </span>chat<span class="op">$</span><span class="kw">list_messages</span>()</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># retrieve the 100 most recent messages</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>chat<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="dv">100</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co"># retrieve all messages: set n = infinity</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>chat<span class="op">$</span><span class="kw">list_messages</span>(<span class="dt">n=</span><span class="ot">Inf</span>)</span>
+<span id="cb10-9"><a href="#cb10-9"></a></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co"># sending messages to a chat</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>chat<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello from R&quot;</span>)</span>
+<span id="cb10-12"><a href="#cb10-12"></a>chat<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&lt;div&gt;Hello from &lt;em&gt;R&lt;/em&gt;&lt;/div&gt;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span>
+<span id="cb10-13"><a href="#cb10-13"></a></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co"># send attachments by including a vector of filenames</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>chat<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Hello with attachments&quot;</span>, <span class="dt">attachments=</span><span class="kw">c</span>(<span class="st">&quot;intro.md&quot;</span>, <span class="st">&quot;myfile.csv&quot;</span>))</span>
+<span id="cb10-16"><a href="#cb10-16"></a></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co"># images can be sent inline rather than as attachments: set content_type to &#39;html&#39;</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a>chat<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;&quot;</span>, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>, <span class="dt">inline=</span><span class="st">&quot;graph.png&quot;</span>)</span>
+<span id="cb10-19"><a href="#cb10-19"></a></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co"># send a reply to a message</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a>msg &lt;-<span class="st"> </span>chat<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;Starting a new thread in R&quot;</span>)</span>
+<span id="cb10-22"><a href="#cb10-22"></a>msg<span class="op">$</span><span class="kw">send_reply</span>(<span class="st">&quot;Reply from R&quot;</span>)</span>
+<span id="cb10-23"><a href="#cb10-23"></a></span>
+<span id="cb10-24"><a href="#cb10-24"></a><span class="co"># list participants in a chat</span></span>
+<span id="cb10-25"><a href="#cb10-25"></a>chat<span class="op">$</span><span class="kw">list_members</span>()</span>
+<span id="cb10-26"><a href="#cb10-26"></a></span>
+<span id="cb10-27"><a href="#cb10-27"></a><span class="co"># mention someone</span></span>
+<span id="cb10-28"><a href="#cb10-28"></a>usr &lt;-<span class="st"> </span>chat<span class="op">$</span><span class="kw">get_member</span>(<span class="st">&quot;Joe Smith&quot;</span>)</span>
+<span id="cb10-29"><a href="#cb10-29"></a>msg<span class="op">$</span><span class="kw">send_message</span>(<span class="st">&quot;FYI Joe&quot;</span>, <span class="dt">mentions=</span>usr, <span class="dt">content_type=</span><span class="st">&quot;html&quot;</span>)</span></code></pre></div>
+<p>Note that unlike a team channel, there is no drive folder associated with a chat.</p>
 </div>
 
 

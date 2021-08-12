@@ -7,6 +7,8 @@
 #' @param scopes The Microsoft Graph scopes (permissions) to obtain. It should never be necessary to change these.
 #' @param site_name,site_url,site_id For `get_sharepoint_site`, either the name, web URL or ID of the SharePoint site to retrieve. Supply exactly one of these.
 #' @param team_name,team_id For `get_team`, either the name or ID of the team to retrieve. Supply exactly one of these.
+#' @param shared_mbox_id,shared_mbox_name,shared_mbox_email For `get_business_outlook`, an ID/principal name/email address. Supply exactly one of these to retrieve a shared mailbox. If all are NULL (the default), retrieve your own mailbox.
+#' @param chat_id For `get_chat`, the ID of a group, one-on-one or meeting chat in Teams.
 #' @param ... Optional arguments that will ultimately be passed to [`AzureAuth::get_azure_token`].
 #' @details
 #' These functions provide easy access to the various collaboration services that are part of Microsoft 365. On first use, they will call your web browser to authenticate with Azure Active Directory, in a similar manner to other web apps. You will get a dialog box asking for permission to access your information. You only have to authenticate once; your credentials will be saved and reloaded in subsequent sessions.
@@ -27,7 +29,7 @@
 #'
 #' For `get_team`, an R6 object of class `ms_team`; for `list_teams`, a list of such objects.
 #' @seealso
-#' [`ms_drive`], [`ms_site`], [`ms_team`]
+#' [`ms_drive`], [`ms_site`], [`ms_team`], [`ms_chat`]
 #'
 #' [`add_methods`] for the associated methods that this package adds to the base AzureGraph classes.
 #'
@@ -53,6 +55,10 @@
 #' myteam$list_channels()
 #' myteam$get_drive()$list_items()
 #'
+#' # retrieving chats
+#' get_chat("chat-id")
+#' list_chats()
+#'
 #' # you can also use your own app registration ID:
 #' get_business_onedrive(app="app_id")
 #' get_sharepoint_site("My site", app="app_id")
@@ -77,10 +83,11 @@ get_personal_onedrive <- function(app=.microsoft365r_app_id,
 #' @export
 get_business_onedrive <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
                                   app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                                  scopes=".default",
+                                  scopes=c("Files.ReadWrite.All", "User.Read"),
                                   ...)
 {
     app <- choose_app(app)
+    scopes <- set_default_scopes(scopes, app)
     do_login(tenant, app, scopes, ...)$get_user()$get_drive()
 }
 
@@ -89,11 +96,13 @@ get_business_onedrive <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "c
 get_sharepoint_site <- function(site_name=NULL, site_url=NULL, site_id=NULL,
                                 tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
                                 app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                                scopes=".default",
+                                scopes=c("Group.ReadWrite.All", "Directory.Read.All",
+                                         "Sites.ReadWrite.All", "Sites.Manage.All"),
                                 ...)
 {
     assert_one_arg(site_name, site_url, site_id, msg="Supply exactly one of site name, URL or ID")
     app <- choose_app(app)
+    scopes <- set_default_scopes(scopes, app)
     login <- do_login(tenant, app, scopes, ...)
 
     if(!is.null(site_name))
@@ -113,10 +122,12 @@ get_sharepoint_site <- function(site_name=NULL, site_url=NULL, site_id=NULL,
 #' @export
 list_sharepoint_sites <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
                                   app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                                  scopes=".default",
+                                  scopes=c("Group.ReadWrite.All", "Directory.Read.All",
+                                           "Sites.ReadWrite.All", "Sites.Manage.All"),
                                   ...)
 {
     app <- choose_app(app)
+    scopes <- set_default_scopes(scopes, app)
     login <- do_login(tenant, app, scopes, ...)
 
     login$get_user()$list_sharepoint_sites()
@@ -127,11 +138,12 @@ list_sharepoint_sites <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "c
 get_team <- function(team_name=NULL, team_id=NULL,
                      tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
                      app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                     scopes=".default",
+                     scopes=c("Group.ReadWrite.All", "Directory.Read.All"),
                      ...)
 {
     assert_one_arg(team_name, team_id, msg="Supply exactly one of team name or ID")
     app <- choose_app(app)
+    scopes <- set_default_scopes(scopes, app)
     login <- do_login(tenant, app, scopes, ...)
 
     if(!is.null(team_name))
@@ -153,10 +165,11 @@ get_team <- function(team_name=NULL, team_id=NULL,
 #' @export
 list_teams <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
                        app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                       scopes=".default",
+                       scopes=c("Group.ReadWrite.All", "Directory.Read.All"),
                        ...)
 {
     app <- choose_app(app)
+    scopes <- set_default_scopes(scopes, app)
     login <- do_login(tenant, app, scopes, ...)
 
     login$get_user()$list_teams()
@@ -174,12 +187,39 @@ get_personal_outlook <- function(app=.microsoft365r_app_id,
 #' @rdname client
 #' @export
 get_business_outlook <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
-                                 app=Sys.getenv("CLIMICROSOFT365_AADAPPID"),
-                                 scopes=".default",
+                                 app=.microsoft365r_app_id,
+                                 shared_mbox_id=NULL, shared_mbox_name=NULL, shared_mbox_email=NULL,
+                                 scopes=c("User.Read", "Mail.Send", "Mail.ReadWrite"),
                                  ...)
 {
-    app <- choose_app(app)
-    do_login(tenant, app, scopes, ...)$get_user()$get_outlook()
+    if(!is.null(shared_mbox_id) || !is.null(shared_mbox_name) || !is.null(shared_mbox_email))
+        scopes <- c(scopes, "Mail.Send.Shared", "Mail.ReadWrite.Shared")
+
+    do_login(tenant, app, scopes, ...)$
+        get_user(user_id=shared_mbox_id, name=shared_mbox_name, email=shared_mbox_email)$
+        get_outlook()
+}
+
+#' @rdname client
+#' @export
+get_chat <- function(chat_id,
+                     tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
+                     app=.microsoft365r_app_id,
+                     scopes=c("User.Read", "Directory.Read.All", "Chat.ReadWrite"),
+                     ...)
+{
+    do_login(tenant, app, scopes, ...)$get_user()$get_chat(chat_id)
+}
+
+
+#' @rdname client
+#' @export
+list_chats <- function(tenant=Sys.getenv("CLIMICROSOFT365_TENANT", "common"),
+                       app=.microsoft365r_app_id,
+                       scopes=c("User.Read", "Directory.Read.All", "Chat.ReadWrite"),
+                       ...)
+{
+    do_login(tenant, app, scopes, ...)$get_user()$list_chats()
 }
 
 
@@ -223,4 +263,12 @@ assert_one_arg <- function(..., msg=NULL)
     nulls <- sapply(arglst, is.null)
     if(sum(!nulls) != 1)
         stop(msg, call.=FALSE)
+}
+
+
+set_default_scopes <- function(scopes, app)
+{
+    if(app %in% c(.cli_microsoft365_app_id, get(".az_cli_app_id", getNamespace("AzureGraph"))))
+        scopes <- ".default"
+    scopes
 }
