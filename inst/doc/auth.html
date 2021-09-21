@@ -335,7 +335,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>For authentication purposes, the package is registered as an app in the ‘aicatr’ AAD tenant; depending on your organisation’s security policy, you may have to get an admin to grant it access to your tenant. See <a href="https://github.com/Azure/Microsoft365R/blob/master/inst/app_registration.md">app_registration.md</a> for details on the app, including the permissions it requires.</p>
 <div id="using-your-own-app-registration" class="section level3">
 <h3>Using your own app registration</h3>
-<p>Rather than getting the Microsoft365R app approved, you can also use your own app registration for authentication. If you want to use the default authorization code flow, the app registration should have a mobile &amp; desktop redirect URI of <code>https://localhost:1410</code> (not a web or SPA redirect). If you want to use the device code flow, the “Allow native client” setting should be enabled. Your app should also have the same default permissions as the Microsoft365R app (see above).</p>
+<p>Rather than getting the Microsoft365R app approved, you can also use your own app registration for authentication. One specific scenario where this is <strong>required</strong> if you want to use Microsoft365R with Shiny—see the vignette “Using Microsoft365R in a Shiny app” for more on this topic, including how to configure the app registration in Azure Active Directory.</p>
+<p>For use in a local R session, if you want to use the default authorization code flow, the app registration should have a mobile &amp; desktop redirect URI of <code>https://localhost:1410</code> (not a web or SPA redirect). If you want to use the device code flow, the “Allow native client” setting should be enabled. Your app should also have the same default permissions as the Microsoft365R app (see above).</p>
 <p>Once the app has been registered, you can pass the app ID to Microsoft365R in a couple of ways.</p>
 <ul>
 <li><p>The client functions can accept the app ID as the <code>app</code> argument:</p>
@@ -356,11 +357,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Be warned that these workarounds may draw the attention of your admin!</p>
 </div>
 </div>
+<div id="authenticating-with-a-token" class="section level2">
+<h2>Authenticating with a token</h2>
+<p>In some circumstances, it may be desirable to carry out authentication/authorization as a separate step prior to making requests to the Microsoft 365 REST API. This holds in a Shiny app, for example, since only the UI part can talk to the browser while the server part does the rest of the work. Another scenario is if the refresh token lifetime set by your org is too short, so that the token expires in between R sessions. In this case, you can authenticate by obtaining a new token with <code>AzureAuth::get_azure_token</code>, and passing the token object to the client function.</p>
+<p>When calling <code>get_azure_token</code>, the scopes you should use are those given in the <code>scopes</code> argument for each client function, and the API host is <code>https://graph.microsoft.com/</code>. The Microsoft365R internal app ID is <code>d44a05d5-c6a5-4bbb-82d2-443123722380</code>, while that for the CLI for Microsoft 365 is <code>31359c7f-bd7e-475c-86db-fdb8c937548e</code>. As noted above, however, these app IDs <strong>only</strong> work for a local R session; you must create your own app registration if you want to use the package inside a Shiny app.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># authenticating separately to working with the MS365 API</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>scopes &lt;-<span class="st"> </span><span class="kw">c</span>(</span>
+<span id="cb7-3"><a href="#cb7-3"></a>    <span class="st">&quot;https://graph.microsoft.com/Files.ReadWrite.All&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4"></a>    <span class="st">&quot;https://graph.microsoft.com/User.Read&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="st">&quot;openid&quot;</span>, <span class="st">&quot;offline_access&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>)</span>
+<span id="cb7-7"><a href="#cb7-7"></a>app &lt;-<span class="st"> &quot;d44a05d5-c6a5-4bbb-82d2-443123722380&quot;</span> <span class="co"># for local use only</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>token &lt;-<span class="st"> </span>AzureAuth<span class="op">::</span><span class="kw">get_azure_token</span>(scopes, <span class="st">&quot;mytenant&quot;</span>, app, <span class="dt">version=</span><span class="dv">2</span>)</span>
+<span id="cb7-9"><a href="#cb7-9"></a>od &lt;-<span class="st"> </span><span class="kw">get_business_onedrive</span>(<span class="dt">token=</span>token)</span></code></pre></div>
+</div>
 <div id="other-issues" class="section level2">
 <h2>Other issues</h2>
 <p>The AzureR packages save your login sessions so that you don’t need to reauthenticate each time. If you’re experiencing authentication failures, you can try clearing the saved data by running the following code:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>AzureAuth<span class="op">::</span><span class="kw">clean_token_directory</span>()</span>
-<span id="cb7-2"><a href="#cb7-2"></a>AzureGraph<span class="op">::</span><span class="kw">delete_graph_login</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>AzureAuth<span class="op">::</span><span class="kw">clean_token_directory</span>()</span>
+<span id="cb8-2"><a href="#cb8-2"></a>AzureGraph<span class="op">::</span><span class="kw">delete_graph_login</span>(<span class="dt">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
 <p>You can also consult the vignettes from the AzureAuth and AzureGraph packages for more information on this topic.</p>
 <ul>
 <li><a href="https://cran.r-project.org/package=AzureAuth/vignettes/scenarios.html">AzureAuth: Authentication scenarios</a></li>

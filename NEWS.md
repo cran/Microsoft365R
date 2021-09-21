@@ -1,3 +1,19 @@
+# Microsoft365R 2.3.1
+
+## OneDrive/SharePoint
+
+- Add a `get_parent_folder()` method for drive items, which returns the parent folder as another drive item. The parent of the root is itself.
+
+## Teams
+
+- Fix a bug where attaching a file to a Teams chat/channel message would fail if the file was a type recognised by Microsoft 365 (#73).
+
+## Other
+
+- Add a vignette "Using Microsoft365R in a Shiny app" for this common use case.
+- Make `token` an explicit argument to the client functions, for supplying an OAuth token object directly. Note that this was always possible, but is now better documented and supported. This is mostly to support the Shiny use case, as well as other situations where authentication is more complicated than usual.
+- Changes to allow Microsoft365R to be usable without being on the search list (#72). Among other things, `make_basic_list()` is now a private method, rather than being exported. Thanks to Robert Ashton (@r-ash) for the PR.
+
 # Microsoft365R 2.3.0
 
 ## Outlook

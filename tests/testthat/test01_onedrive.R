@@ -1,3 +1,4 @@
+tenant <- "consumers"
 app <- Sys.getenv("AZ_TEST_NATIVE_APP_ID")
 
 if(app == "")
@@ -6,19 +7,19 @@ if(app == "")
 if(!interactive())
     skip("OneDrive tests skipped: must be in interactive session")
 
-tok <- try(AzureAuth::get_azure_token(c("openid", "offline_access"),
-    tenant="9188040d-6c67-4c5b-b112-36a304b66dad", app=.microsoft365r_app_id, version=2),
-    silent=TRUE)
-if(inherits(tok, "try-error"))
+tok <- get_test_token(tenant, app, c("Files.ReadWrite.All", "User.Read"))
+if(is.null(tok))
     skip("OneDrive tests skipped: unable to login to consumers tenant")
+
+drv <- try(call_graph_endpoint(tok, "me/drive"), silent=TRUE)
+if(inherits(drv, "try-error"))
+    skip("OneDrive tests skipped: service not available")
+
+od <- ms_drive$new(tok, tenant, drv)
 
 test_that("OneDrive personal works",
 {
-    od <- get_personal_onedrive()
     expect_is(od, "ms_drive")
-
-    od2 <- get_personal_onedrive(app=app)
-    expect_is(od2, "ms_drive")
 
     ls <- od$list_items()
     expect_is(ls, "data.frame")
@@ -55,26 +56,38 @@ test_that("OneDrive personal works",
 
 test_that("Drive item methods work",
 {
-    od <- get_personal_onedrive()
-
     root <- od$get_item("/")
     expect_is(root, "ms_drive_item")
+    expect_equal(root$properties$name, "root")
+
+    rootp <- root$get_parent_folder()
+    expect_is(rootp, "ms_drive_item")
+    expect_equal(rootp$properties$name, "root")
 
     tmpname1 <- make_name(10)
     folder1 <- root$create_folder(tmpname1)
     expect_is(folder1, "ms_drive_item")
     expect_true(folder1$is_folder())
 
+    folder1p <- folder1$get_parent_folder()
+    expect_equal(rootp$properties$name, "root")
+
     tmpname2 <- make_name(10)
     folder2 <- folder1$create_folder(tmpname2)
     expect_is(folder2, "ms_drive_item")
     expect_true(folder2$is_folder())
+
+    folder2p <- folder2$get_parent_folder()
+    expect_equal(folder2p$properties$name, folder1$properties$name)
 
     src <- write_file()
     expect_silent(file1 <- root$upload(src))
     expect_is(file1, "ms_drive_item")
     expect_false(file1$is_folder())
     expect_error(file1$create_folder("bad"))
+
+    file1p <- file1$get_parent_folder()
+    expect_equal(file1p$properties$name, "root")
 
     file1_0 <- root$get_item(basename(src))
     expect_is(file1_0, "ms_drive_item")
@@ -87,6 +100,9 @@ test_that("Drive item methods work",
 
     expect_silent(file2 <- folder1$upload(src))
     expect_is(file2, "ms_drive_item")
+
+    file2p <- file2$get_parent_folder()
+    expect_equal(file2p$properties$name, folder1$properties$name)
 
     dest2 <- tempfile()
     expect_silent(file2$download(dest2))
@@ -124,8 +140,6 @@ test_that("Drive item methods work",
 
 test_that("Methods work with filenames with special characters",
 {
-    od <- get_personal_onedrive()
-
     test_name <- paste(make_name(5), "plus spaces and áccénts")
     src <- write_file(fname=file.path(tempdir(), test_name))
 
@@ -138,8 +152,6 @@ test_that("Methods work with filenames with special characters",
 
 test_that("Nested folder creation/deletion works",
 {
-    od <- get_personal_onedrive()
-
     f1 <- make_name(10)
     f2 <- make_name(10)
     f3 <- make_name(10)
