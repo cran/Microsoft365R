@@ -21,7 +21,8 @@
 #' - `upload(src, dest, blocksize)`: Upload a file. Only applicable for a folder item.
 #' - `create_folder(path)`: Create a folder. Only applicable for a folder item.
 #' - `get_item(path)`: Get a child item (file or folder) under this folder.
-#' - `get_parent_folder()`: Get the parent folder for this item. Returns the root folder for the root.
+#' - `get_parent_folder()`: Get the parent folder for this item, as a drive item object. Returns the root folder for the root.
+#' - `get_path()`: Get the absolute path for this item, as a character string.
 #' - `is_folder()`: Information function, returns TRUE if this item is a folder.
 #'
 #' @section Initialization:
@@ -108,9 +109,10 @@ ms_drive_item <- R6::R6Class("ms_drive_item", inherit=ms_object,
 
 public=list(
 
-    initialize=function(token, tenant=NULL, properties=NULL)
+    initialize=function(token, tenant=NULL, properties=NULL, remote=FALSE)
     {
         self$type <- "drive item"
+        private$remote <- remote
         private$api_type <- file.path("drives", properties$parentReference$driveId, "items")
         super$initialize(token, tenant, properties)
     },
@@ -305,6 +307,12 @@ public=list(
         invisible(NULL)
     },
 
+    get_path=function()
+    {
+        path <- private$make_absolute_path()
+        sub("^.+root:?/?", "/", path)
+    },
+
     print=function(...)
     {
         file_or_dir <- if(self$is_folder()) "file folder" else "file"
@@ -320,6 +328,9 @@ public=list(
 
 private=list(
 
+    # flag: whether this object is a shared file/folder on another drive
+    remote=NULL,
+
     # dest = . or '' --> this item
     # dest = .. --> parent folder
     # dest = (childname) --> path to named child
@@ -327,14 +338,18 @@ private=list(
     {
         if(dest == ".")
             dest <- ""
+
+        # this is needed to find the correct parent folder for a shared item
+        if(private$remote)
+            self$sync_fields()
+
         parent <- self$properties$parentReference
         name <- self$properties$name
         op <- if(name == "root")
             file.path("drives", parent$driveId, "root:")
         else
         {
-            # have to infer the parent path if we got this item as a Teams channel folder
-            # in this case, assume the parent is the root folder
+            # null path means parent is the root folder
             if(is.null(parent$path))
                 parent$path <- sprintf("/drives/%s/root:", parent$driveId)
             if(dest != "..")

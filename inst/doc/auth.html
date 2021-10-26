@@ -332,17 +332,22 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="app-registration-and-approvals" class="section level2">
 <h2>App registration and approvals</h2>
-<p>For authentication purposes, the package is registered as an app in the ‘aicatr’ AAD tenant; depending on your organisation’s security policy, you may have to get an admin to grant it access to your tenant. See <a href="https://github.com/Azure/Microsoft365R/blob/master/inst/app_registration.md">app_registration.md</a> for details on the app, including the permissions it requires.</p>
+<p>Microsoft365R comes with a default app registration for authenticating with AAD; depending on your organisation’s security policy, you may have to get an admin to grant it access to your tenant. See <a href="https://github.com/Azure/Microsoft365R/blob/master/inst/app_registration.md">app_registration.md</a> for details on the permissions that Microsoft365R requires.</p>
 <div id="using-your-own-app-registration" class="section level3">
 <h3>Using your own app registration</h3>
-<p>Rather than getting the Microsoft365R app approved, you can also use your own app registration for authentication. One specific scenario where this is <strong>required</strong> if you want to use Microsoft365R with Shiny—see the vignette “Using Microsoft365R in a Shiny app” for more on this topic, including how to configure the app registration in Azure Active Directory.</p>
-<p>For use in a local R session, if you want to use the default authorization code flow, the app registration should have a mobile &amp; desktop redirect URI of <code>https://localhost:1410</code> (not a web or SPA redirect). If you want to use the device code flow, the “Allow native client” setting should be enabled. Your app should also have the same default permissions as the Microsoft365R app (see above).</p>
+<p>Rather than getting the default app registration approved, you can also create your own registration for authentication. If this is for use in a local R session, it should have a mobile &amp; desktop redirect URI of <code>https://localhost:1410</code> (not a web or SPA redirect), and the “Allow native client” setting should be enabled. You can use the same permissions as the default app, or set your own: for example, if you know you don’t need to interact with Outlook, you can omit the Mail.Send and Mail.ReadWrite permissions.</p>
 <p>Once the app has been registered, you can pass the app ID to Microsoft365R in a couple of ways.</p>
 <ul>
 <li><p>The client functions can accept the app ID as the <code>app</code> argument:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">get_business_onedrive</span>(<span class="dt">app=</span><span class="st">&quot;myappid&quot;</span>)</span></code></pre></div></li>
 <li><p>Alternatively, if the environment variable <code>CLIMICROSOFT365_AADAPPID</code> is set, Microsoft365R will use its value as the app ID for authenticating to the Microsoft 365 Business services (Teams, SharePoint and OneDrive for Business). This environment variable is defined by the <a href="https://pnp.github.io/cli-microsoft365/">CLI for Microsoft365</a>, an open source tool for managing Microsoft 365 accounts; you thus can reuse the same app ID for both the CLI and Microsoft365R.</p></li>
 </ul>
+<p>If you want to use Microsoft365R outside a local R session, creating a custom app registration is <strong>required</strong>. In particular, this includes the following common scenarios:</p>
+<ul>
+<li>Using Microsoft365R inside a Shiny webapp</li>
+<li>Using it in an unattended (automated) script, eg in a GitHub Actions workflow or other CI/CD pipeline</li>
+</ul>
+<p>See the vignettes “Using Microsoft365R in a Shiny app” and “Using Microsoft365R in an unattended script” for more on these use cases, including how to configure the app registration in Azure Active Directory.</p>
 </div>
 <div id="using-other-app-registrations-last-resort-workarounds" class="section level3">
 <h3>Using other app registrations: last-resort workarounds</h3>
