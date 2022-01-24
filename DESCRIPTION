@@ -1,6 +1,6 @@
 Package: Microsoft365R
 Title: Interface to the 'Microsoft 365' Suite of Cloud Services
-Version: 2.3.2
+Version: 2.3.3
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi73@gmail.com", role = c("aut", "cre")),
     person("Roman", "Zenka", role="ctb"),
@@ -19,11 +19,11 @@ Imports: AzureAuth, AzureGraph (>= 1.3.1), utils, curl, httr, jsonlite,
 Suggests: openssl, knitr, rmarkdown, testthat, blastula, emayili
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2021-10-25 16:20:57 UTC; hongo
+Packaged: 2022-01-24 17:20:07 UTC; hongo
 Author: Hong Ooi [aut, cre],
   Roman Zenka [ctb],
   Robert Ashton [ctb],
   Microsoft [cph]
 Maintainer: Hong Ooi <hongooi73@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-10-26 12:50:02 UTC
+Date/Publication: 2022-01-24 17:42:42 UTC
