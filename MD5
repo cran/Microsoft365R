@@ -1,9 +1,9 @@
-c7c3731a390ac7f33e608a7ef8c8a8b8 *DESCRIPTION
+ed6896fcb8f24d640e0078172c9c7ddd *DESCRIPTION
 47daa2f0395cbf1a583e857133802618 *LICENSE
 1c56d1163e22218557d5461e6e63d76e *NAMESPACE
-cfe5cdda5141d084f59f682ca5ecdc85 *NEWS.md
+7d34f81c578da179cb7fd92c7a6a1c01 *NEWS.md
 0518f7429980373162d9dc36ca1d923c *R/Microsoft365R.R
-e916065fc26446b814ec8cca4b99bad2 *R/add_methods.R
+adfc55f8401bf391be0f69ac4165b60f *R/add_methods.R
 ea5e25864408f384199ffeef7a9f503b *R/build_chatmessage_body.R
 ff39836825bb45bf97f2b2f8dcbaa6b7 *R/build_email_request.R
 a9f6bf47b3f8f1a72bbf12952bb40fa7 *R/client.R
@@ -24,8 +24,8 @@ a0b2dc7931973e3bd351fe3ad21827cf *R/ms_outlook_folder.R
 d457a8c9b48c189dee36168638196cc2 *R/ms_plan.R
 523325d149513e4265742c205db56ad7 *R/ms_plan_bucket.R
 7746081c004ba2ed37e93a364bd59ead *R/ms_plan_task.R
-819934f194b422a9ddc6f4b0edd04450 *R/ms_site.R
-a2eedfb8bdf7a2b21fe3781981ac59b1 *R/ms_team.R
+d81890489cef6e76c3155821e35ac26e *R/ms_site.R
+e0985aab26b2ce261ba2b03c24a78577 *R/ms_team.R
 e8f23426cfebc534a7653869d379979d *R/ms_team_member.R
 ae4866d61671fa696f440fcce3b5244e *README.md
 9e19426da98ecad29d0c9e4d1a7dd237 *build/vignette.rds
