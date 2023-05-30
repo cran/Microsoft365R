@@ -15,74 +15,103 @@
 
 <title>Using Microsoft365R in an unattended script</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -91,13 +120,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -105,6 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -300,152 +337,226 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Using Microsoft365R in an unattended script</h1>
+<h1 class="title toc-ignore">Using Microsoft365R in an unattended
+script</h1>
 <h4 class="author">Hong Ooi</h4>
 
 
 
-<p>This vignette describes how to incorporate Microsoft365R into an automated (unattended) script, such as for a GitHub Actions workflow or other CI/CD process. There are two ways of achieving this: with a service principal, and with a service account.</p>
+<p>This vignette describes how to incorporate Microsoft365R into an
+automated (unattended) script, such as for a GitHub Actions workflow or
+other CI/CD process. There are two ways of achieving this: with a
+service principal, and with a service account.</p>
 <div id="service-principal" class="section level2">
 <h2>Service principal</h2>
-<p>This approach involves creating a new app registration that has application permissions, and using it to work with the Microsoft Graph API. Note that working with application permissions requires admin consent, so you won’t be able to run this workflow on your own unless you’re an admin.</p>
+<p>This approach involves creating a new app registration that has
+application permissions, and using it to work with the Microsoft Graph
+API. Note that working with application permissions requires admin
+consent, so you won’t be able to run this workflow on your own unless
+you’re an admin.</p>
 <div id="app-registration" class="section level3">
 <h3>App registration</h3>
-<p>The default Microsoft365R app registration only has <em>delegated</em> permissions. This means that it requires you to authenticate with Azure Active Directory (AAD) to obtain an OAuth token, after which it will use your credentials to perform tasks. This doesn’t work if you want to use the package in an automated script, ie one that is meant to run without user intervention.</p>
-<p>In this situation, you must create a new app registration in AAD that has <em>application</em> permissions. This means that, rather than using the credentials of a logged-in user, Microsoft365R has its own, custom set of permissions that determine what it can do.</p>
-<p>The app registration for an unattended script looks slightly different to that for a user-facing application.</p>
+<p>The default Microsoft365R app registration only has
+<em>delegated</em> permissions. This means that it requires you to
+authenticate with Azure Active Directory (AAD) to obtain an OAuth token,
+after which it will use your credentials to perform tasks. This doesn’t
+work if you want to use the package in an automated script, ie one that
+is meant to run without user intervention.</p>
+<p>In this situation, you must create a new app registration in AAD that
+has <em>application</em> permissions. This means that, rather than using
+the credentials of a logged-in user, Microsoft365R has its own, custom
+set of permissions that determine what it can do.</p>
+<p>The app registration for an unattended script looks slightly
+different to that for a user-facing application.</p>
 <ul>
-<li><p>There is no redirect URI, since we don’t need a user to authenticate in a browser.</p></li>
-<li><p>You must set the <strong>client secret</strong>, which is like a password that serves to verify to AAD the identity of the workflow calling the script. Alternatively, you can use a certificate instead of a secret; this is more secure but also more complicated to setup and use.</p></li>
-<li><p>In nearly all cases, the <strong>intended audience</strong> of your app registration should be only members of your AAD tenant.</p></li>
-<li><p>Ensure that you give your app <strong>application permissions</strong> instead of delegated permissions. Refer to the complete <a href="https://docs.microsoft.com/en-us/graph/permissions-reference?context=graph%2Fapi%2Fbeta&amp;view=graph-rest-beta">list of Graph permissions</a> to determine which ones you need.</p></li>
+<li><p>There is no redirect URI, since we don’t need a user to
+authenticate in a browser.</p></li>
+<li><p>You must set the <strong>client secret</strong>, which is like a
+password that serves to verify to AAD the identity of the workflow
+calling the script. Alternatively, you can use a certificate instead of
+a secret; this is more secure but also more complicated to setup and
+use.</p></li>
+<li><p>In nearly all cases, the <strong>intended audience</strong> of
+your app registration should be only members of your AAD
+tenant.</p></li>
+<li><p>Ensure that you give your app <strong>application
+permissions</strong> instead of delegated permissions. Refer to the
+complete <a href="https://learn.microsoft.com/en-us/graph/permissions-reference?context=graph%2Fapi%2Fbeta&amp;view=graph-rest-beta">list
+of Graph permissions</a> to determine which ones you need.</p></li>
 </ul>
 <p>The following pages at the AAD documentation will be helpful:</p>
 <ul>
-<li><p><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">A step-by-step guide</a> to registering an app in the Azure portal.</p></li>
-<li><p><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis">How to set permissions for an app</a>.</p></li>
-<li><p><a href="https://docs.microsoft.com/en-us/graph/auth/auth-concepts#microsoft-graph-permissions">Authentication and authorization basics for Microsoft Graph</a>.</p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">A
+step-by-step guide</a> to registering an app in the Azure
+portal.</p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis">How
+to set permissions for an app</a>.</p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/graph/auth/auth-concepts#microsoft-graph-permissions">Authentication
+and authorization basics for Microsoft Graph</a>.</p></li>
 </ul>
 </div>
 <div id="application-permissions-and-security" class="section level3">
 <h3>Application permissions and security</h3>
-<p>Application permissions are <em>much more powerful</em> than delegated permissions. From the “Authentication and authorization basics” link above:</p>
+<p>Application permissions are <em>much more powerful</em> than
+delegated permissions. From the “Authentication and authorization
+basics” link above:</p>
 <blockquote>
-<p>For application permissions, the effective permissions of your app will be the full level of privileges implied by the permission. For example, an app that has the User.ReadWrite.All application permission can update the profile of every user in the organization.</p>
+<p>For application permissions, the effective permissions of your app
+will be the full level of privileges implied by the permission. For
+example, an app that has the User.ReadWrite.All application permission
+can update the profile of every user in the organization.</p>
 </blockquote>
-<p>This is why granting application permissions always requires admin consent. Similarly, you should only give your app registration the minimum permissions it needs to get the job done. In particular, avoid giving your app read/write permissions if it only needs to read data.</p>
+<p>This is why granting application permissions always requires admin
+consent. Similarly, you should only give your app registration the
+minimum permissions it needs to get the job done. In particular, avoid
+giving your app read/write permissions if it only needs to read
+data.</p>
 </div>
 <div id="sample-code-skeleton" class="section level3">
 <h3>Sample code skeleton</h3>
-<p>Here is a simple script that retrieves a given user’s OneDrive and lists the contents of the root directory. We cannot use <code>get_personal/business_onedrive</code>, because these client functions assume that a user is logged in. Instead, we call the underlying R6 methods directly.</p>
+<p>Here is a simple script that retrieves a given user’s OneDrive and
+lists the contents of the root directory. We cannot use
+<code>get_personal/business_onedrive</code>, because these client
+functions assume that a user is logged in. Instead, we call the
+underlying R6 methods directly.</p>
 <p>For this script, the application permissions needed are:</p>
 <ul>
 <li>Get a user’s details: User.Read</li>
 <li>Read from OneDrive: Files.Read</li>
 </ul>
-<p>Observe that this script can potentially read <em>every user’s OneDrive</em> in your organisation, given their username. This shows why client secrets and application permissions are not to be handed out lightly!</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(AzureGraph)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(Microsoft365R)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>tenant &lt;-<span class="st"> &quot;your-tenant-here&quot;</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># the application/client ID of the app registration you created in AAD</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># - not to be confused with the &#39;object ID&#39; or &#39;service principal ID&#39;</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>app &lt;-<span class="st"> &quot;your-app-id-here&quot;</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co"># retrieve the client secret (password) from an environment variable</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a>pwd &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_CLIENT_SECRET&quot;</span>)</span>
-<span id="cb1-12"><a href="#cb1-12"></a></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># retrieve the user whose OneDrive we want to access</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co"># - this should be their &#39;userPrincipalName&#39;, which is of the form &#39;name@tenant.com&#39;</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co"># - note this may be different to their regular email address</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a>user &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_USER&quot;</span>)</span>
-<span id="cb1-17"><a href="#cb1-17"></a></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co"># create a Microsoft Graph login</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a>gr &lt;-<span class="st"> </span><span class="kw">create_graph_login</span>(tenant, app, <span class="dt">password=</span>pwd, <span class="dt">auth_type=</span><span class="st">&quot;client_credentials&quot;</span>)</span>
-<span id="cb1-20"><a href="#cb1-20"></a></span>
-<span id="cb1-21"><a href="#cb1-21"></a>drv &lt;-<span class="st"> </span>gr<span class="op">$</span><span class="kw">get_user</span>(user)<span class="op">$</span><span class="kw">get_drive</span>()</span>
-<span id="cb1-22"><a href="#cb1-22"></a></span>
-<span id="cb1-23"><a href="#cb1-23"></a>drv<span class="op">$</span><span class="kw">list_files</span>()</span></code></pre></div>
+<p>Observe that this script can potentially read <em>every user’s
+OneDrive</em> in your organisation, given their username. This shows why
+client secrets and application permissions are not to be handed out
+lightly!</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(AzureGraph)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Microsoft365R)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>tenant <span class="ot">&lt;-</span> <span class="st">&quot;your-tenant-here&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># the application/client ID of the app registration you created in AAD</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># - not to be confused with the &#39;object ID&#39; or &#39;service principal ID&#39;</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;your-app-id-here&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># retrieve the client secret (password) from an environment variable</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>pwd <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_CLIENT_SECRET&quot;</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># retrieve the user whose OneDrive we want to access</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># - this should be their &#39;userPrincipalName&#39;, which is of the form &#39;name@tenant.com&#39;</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co"># - note this may be different to their regular email address</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>user <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_USER&quot;</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co"># create a Microsoft Graph login</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>gr <span class="ot">&lt;-</span> <span class="fu">create_graph_login</span>(tenant, app, <span class="at">password=</span>pwd, <span class="at">auth_type=</span><span class="st">&quot;client_credentials&quot;</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>drv <span class="ot">&lt;-</span> gr<span class="sc">$</span><span class="fu">get_user</span>(user)<span class="sc">$</span><span class="fu">get_drive</span>()</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>drv<span class="sc">$</span><span class="fu">list_files</span>()</span></code></pre></div>
 </div>
 </div>
 <div id="service-account" class="section level2">
 <h2>Service account</h2>
-<p>Using a service principal is the Microsoft-recommended approach, but as noted above, is potentially very powerful. For this reason, you may want to consider using a service account instead. This is a normal user account that is not intended for interactive use, but instead authenticates via a script. The advantage is that the account only needs delegated permissions and so won’t have access to all of your tenant’s resources.</p>
-<p>To authenticate a service account with AAD non-interactively, you use the <a href="https://docs.microsoft.com/en-au/azure/active-directory/develop/v2-oauth-ropc">resource owner password grant</a> flow. You can use any app registration that has access to your tenant and has the correct delegated permissions to work with Microsoft Graph; see the “Authenticating to Microsoft 365” vignette for more information on creating an app registration. Note that you (or an admin) must grant consent for the permissions beforehand.</p>
+<p>Using a service principal is the Microsoft-recommended approach, but
+as noted above, is potentially very powerful. For this reason, you may
+want to consider using a service account instead. This is a normal user
+account that is not intended for interactive use, but instead
+authenticates via a script. The advantage is that the account only needs
+delegated permissions and so won’t have access to all of your tenant’s
+resources.</p>
+<p>To authenticate a service account with AAD non-interactively, you use
+the <a href="https://learn.microsoft.com/en-au/azure/active-directory/develop/v2-oauth-ropc">resource
+owner password grant</a> flow. You can use any app registration that has
+access to your tenant and has the correct delegated permissions to work
+with Microsoft Graph; see the “Authenticating to Microsoft 365” vignette
+for more information on creating an app registration. Note that you (or
+an admin) must grant consent for the permissions beforehand.</p>
 <div id="creating-a-service-account" class="section level3">
 <h3>Creating a service account</h3>
-<p>While any user account can in principle be employed as a service account, you (or an admin) should create a new account specifically for this purpose. This is for the following reasons:</p>
+<p>While any user account can in principle be employed as a service
+account, you (or an admin) should create a new account specifically for
+this purpose. This is for the following reasons:</p>
 <ul>
-<li>There are restrictions on how the ROPC authentication flow works with AAD. In particular a service account can’t make use of multifactor authentication, and it also can’t be a personal account that is a guest in a tenant.</li>
-<li>Creating a new account allows you to assign it a strong random password, which means it can’t be easily guessed, phished or brute-forced. For example, you can use the <code>openssl::rand_bytes()</code> function to generate the password.</li>
-<li>You can limit the account to only the roles and group memberships it needs for its specific task.</li>
+<li>There are restrictions on how the ROPC authentication flow works
+with AAD. In particular a service account can’t make use of multifactor
+authentication, and it also can’t be a personal account that is a guest
+in a tenant.</li>
+<li>Creating a new account allows you to assign it a strong random
+password, which means it can’t be easily guessed, phished or
+brute-forced. For example, you can use the
+<code>openssl::rand_bytes()</code> function to generate the
+password.</li>
+<li>You can limit the account to only the roles and group memberships it
+needs for its specific task.</li>
 </ul>
 </div>
 <div id="sample-code" class="section level3">
 <h3>Sample code</h3>
-<p>Here is a simple example of a script that logs in and accesses a folder in SharePoint. We assume that the service account has been granted access to the SharePoint site beforehand.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(Microsoft365R)</span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a>tenant &lt;-<span class="st"> &quot;your-tenant-here&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># the application/client ID of the app registration to use</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>app &lt;-<span class="st"> &quot;your-app-id-here&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a></span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="co"># get the service account username and password</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a>user &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_USER&quot;</span>)</span>
-<span id="cb2-10"><a href="#cb2-10"></a>pwd &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_PASSWORD&quot;</span>)</span>
-<span id="cb2-11"><a href="#cb2-11"></a></span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co"># SharePoint site and path to folder</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a>sitename &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SPO_SITENAME&quot;</span>)</span>
-<span id="cb2-14"><a href="#cb2-14"></a>folderpath &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SPO_FOLDERPATH&quot;</span>)</span>
-<span id="cb2-15"><a href="#cb2-15"></a></span>
-<span id="cb2-16"><a href="#cb2-16"></a><span class="co"># use the &#39;resource_owner&#39; auth type for a non-interactive login</span></span>
-<span id="cb2-17"><a href="#cb2-17"></a>site &lt;-<span class="st"> </span><span class="kw">get_sharepoint_site</span>(sitename, <span class="dt">tenant=</span>tenant, <span class="dt">app=</span>app, <span class="dt">username=</span>user, <span class="dt">password=</span>pwd,</span>
-<span id="cb2-18"><a href="#cb2-18"></a>    <span class="dt">auth_type=</span><span class="st">&quot;resource_owner&quot;</span>)</span>
-<span id="cb2-19"><a href="#cb2-19"></a></span>
-<span id="cb2-20"><a href="#cb2-20"></a>folder &lt;-<span class="st"> </span>site<span class="op">$</span><span class="kw">get_drive</span>()<span class="op">$</span><span class="kw">get_item</span>(folderpath)</span>
-<span id="cb2-21"><a href="#cb2-21"></a>folder<span class="op">$</span><span class="kw">list_files</span>()</span></code></pre></div>
-<p>Here is a slightly more complex example: a script that downloads a shared file in OneDrive. The file must have been shared with the service account beforehand, but could be sourced from either another user’s OneDrive or from a SharePoint document library.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(Microsoft365R)</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>tenant &lt;-<span class="st"> &quot;your-tenant-here&quot;</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co"># the application/client ID of the app registration to use</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>app &lt;-<span class="st"> &quot;your-app-id-here&quot;</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># get the service account username and password</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>user &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_USER&quot;</span>)</span>
-<span id="cb3-10"><a href="#cb3-10"></a>pwd &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_PASSWORD&quot;</span>)</span>
-<span id="cb3-11"><a href="#cb3-11"></a></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co"># the drive ID and file we want to access</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a>target_drive &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_DRIVE&quot;</span>)</span>
-<span id="cb3-14"><a href="#cb3-14"></a>target_path &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_PATH&quot;</span>)</span>
-<span id="cb3-15"><a href="#cb3-15"></a></span>
-<span id="cb3-16"><a href="#cb3-16"></a>drv &lt;-<span class="st"> </span><span class="kw">get_business_onedrive</span>(<span class="dt">tenant=</span>tenant, <span class="dt">app=</span>app, <span class="dt">username=</span>user, <span class="dt">password=</span>pwd,</span>
-<span id="cb3-17"><a href="#cb3-17"></a>    <span class="dt">auth_type=</span><span class="st">&quot;resource_owner&quot;</span>)</span>
-<span id="cb3-18"><a href="#cb3-18"></a></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co"># search for the desired item in the list of shared items</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a>shared &lt;-<span class="st"> </span>drv<span class="op">$</span><span class="kw">list_shared_files</span>(<span class="dt">info=</span><span class="st">&quot;items&quot;</span>)</span>
-<span id="cb3-21"><a href="#cb3-21"></a>target_dir &lt;-<span class="st"> </span><span class="kw">dirname</span>(target_path)</span>
-<span id="cb3-22"><a href="#cb3-22"></a>target_name &lt;-<span class="st"> </span><span class="kw">basename</span>(target_path)</span>
-<span id="cb3-23"><a href="#cb3-23"></a>item &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a></span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="cf">for</span>(shared_item <span class="cf">in</span> shared)</span>
-<span id="cb3-26"><a href="#cb3-26"></a>{</span>
-<span id="cb3-27"><a href="#cb3-27"></a>    remote_drive &lt;-<span class="st"> </span>shared_item<span class="op">$</span>properties<span class="op">$</span>parentReference<span class="op">$</span>driveId</span>
-<span id="cb3-28"><a href="#cb3-28"></a>    path &lt;-<span class="st"> </span>shared_item<span class="op">$</span><span class="kw">get_parent_path</span>()</span>
-<span id="cb3-29"><a href="#cb3-29"></a>    name &lt;-<span class="st"> </span>shared_item<span class="op">$</span>properties<span class="op">$</span>name</span>
-<span id="cb3-30"><a href="#cb3-30"></a></span>
-<span id="cb3-31"><a href="#cb3-31"></a>    <span class="cf">if</span>(remote_drive <span class="op">==</span><span class="st"> </span>target_drive <span class="op">&amp;&amp;</span><span class="st"> </span>path <span class="op">==</span><span class="st"> </span>target_dir <span class="op">&amp;&amp;</span><span class="st"> </span>name <span class="op">==</span><span class="st"> </span>target_name)</span>
-<span id="cb3-32"><a href="#cb3-32"></a>    {</span>
-<span id="cb3-33"><a href="#cb3-33"></a>        item &lt;-<span class="st"> </span>shared_item</span>
-<span id="cb3-34"><a href="#cb3-34"></a>        <span class="cf">break</span></span>
-<span id="cb3-35"><a href="#cb3-35"></a>    }</span>
-<span id="cb3-36"><a href="#cb3-36"></a>}</span>
-<span id="cb3-37"><a href="#cb3-37"></a><span class="cf">if</span>(<span class="kw">is.null</span>(item)) <span class="kw">stop</span>(<span class="st">&quot;Item not found!&quot;</span>)</span>
-<span id="cb3-38"><a href="#cb3-38"></a></span>
-<span id="cb3-39"><a href="#cb3-39"></a>item<span class="op">$</span><span class="kw">download</span>(<span class="dt">overwrite=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p>Here is a simple example of a script that logs in and accesses a
+folder in SharePoint. We assume that the service account has been
+granted access to the SharePoint site beforehand.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(Microsoft365R)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>tenant <span class="ot">&lt;-</span> <span class="st">&quot;your-tenant-here&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># the application/client ID of the app registration to use</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;your-app-id-here&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># get the service account username and password</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>user <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_USER&quot;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>pwd <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_PASSWORD&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co"># SharePoint site and path to folder</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>sitename <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SPO_SITENAME&quot;</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>folderpath <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SPO_FOLDERPATH&quot;</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># use the &#39;resource_owner&#39; auth type for a non-interactive login</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>site <span class="ot">&lt;-</span> <span class="fu">get_sharepoint_site</span>(sitename, <span class="at">tenant=</span>tenant, <span class="at">app=</span>app, <span class="at">username=</span>user, <span class="at">password=</span>pwd,</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>    <span class="at">auth_type=</span><span class="st">&quot;resource_owner&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>folder <span class="ot">&lt;-</span> site<span class="sc">$</span><span class="fu">get_drive</span>()<span class="sc">$</span><span class="fu">get_item</span>(folderpath)</span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>folder<span class="sc">$</span><span class="fu">list_files</span>()</span></code></pre></div>
+<p>Here is a slightly more complex example: a script that downloads a
+shared file in OneDrive. The file must have been shared with the service
+account beforehand, but could be sourced from either another user’s
+OneDrive or from a SharePoint document library.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(Microsoft365R)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>tenant <span class="ot">&lt;-</span> <span class="st">&quot;your-tenant-here&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># the application/client ID of the app registration to use</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;your-app-id-here&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># get the service account username and password</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>user <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_USER&quot;</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>pwd <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_SERVICE_PASSWORD&quot;</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co"># the drive ID and file we want to access</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>target_drive <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_DRIVE&quot;</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>target_path <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_MS365R_TARGET_PATH&quot;</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>drv <span class="ot">&lt;-</span> <span class="fu">get_business_onedrive</span>(<span class="at">tenant=</span>tenant, <span class="at">app=</span>app, <span class="at">username=</span>user, <span class="at">password=</span>pwd,</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>    <span class="at">auth_type=</span><span class="st">&quot;resource_owner&quot;</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co"># search for the desired item in the list of shared items</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>shared <span class="ot">&lt;-</span> drv<span class="sc">$</span><span class="fu">list_shared_files</span>(<span class="at">info=</span><span class="st">&quot;items&quot;</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>target_dir <span class="ot">&lt;-</span> <span class="fu">dirname</span>(target_path)</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>target_name <span class="ot">&lt;-</span> <span class="fu">basename</span>(target_path)</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>item <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="cf">for</span>(shared_item <span class="cf">in</span> shared)</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>{</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    remote_drive <span class="ot">&lt;-</span> shared_item<span class="sc">$</span>properties<span class="sc">$</span>parentReference<span class="sc">$</span>driveId</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    path <span class="ot">&lt;-</span> shared_item<span class="sc">$</span><span class="fu">get_parent_path</span>()</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>    name <span class="ot">&lt;-</span> shared_item<span class="sc">$</span>properties<span class="sc">$</span>name</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>    <span class="cf">if</span>(remote_drive <span class="sc">==</span> target_drive <span class="sc">&amp;&amp;</span> path <span class="sc">==</span> target_dir <span class="sc">&amp;&amp;</span> name <span class="sc">==</span> target_name)</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>    {</span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>        item <span class="ot">&lt;-</span> shared_item</span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>    }</span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>}</span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">is.null</span>(item)) <span class="fu">stop</span>(<span class="st">&quot;Item not found!&quot;</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>item<span class="sc">$</span><span class="fu">download</span>(<span class="at">overwrite=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 </div>
 

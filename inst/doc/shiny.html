@@ -15,74 +15,103 @@
 
 <title>Using Microsoft365R in a Shiny app</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -91,13 +120,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -105,6 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -305,7 +342,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p>This vignette describes how to incorporate Microsoft365R and interactive authentication with Azure Active Directory (AAD) into a Shiny web app. There are a few steps involved:</p>
+<p>This vignette describes how to incorporate Microsoft365R and
+interactive authentication with Azure Active Directory (AAD) into a
+Shiny web app. There are a few steps involved:</p>
 <ul>
 <li>Register your app with AAD</li>
 <li>Use the app ID to authenticate and get an OAuth token</li>
@@ -313,87 +352,128 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 <div id="app-registration" class="section level2">
 <h2>App registration</h2>
-<p>The default Microsoft365R app registration only works when the package is used on a local machine; it does not support running in a remote server. Because of this, when you use Microsoft365R inside a Shiny app, you (or your friendly local sysadmin) must register that app in AAD.</p>
+<p>The default Microsoft365R app registration only works when the
+package is used on a local machine; it does not support running in a
+remote server. Because of this, when you use Microsoft365R inside a
+Shiny app, you (or your friendly local sysadmin) must register that app
+in AAD.</p>
 <p>The main things to set in your app registration are:</p>
 <ul>
-<li><p>The <strong>redirect URI</strong> of your app, ie, your user-facing site address. For example if your app is hosted in shinyapps.io, this would be a URL of the form <code>https://youraccount.shinyapps.io/appname</code>. If your app uses a special port number rather than the default port 443 for HTTPS, don’t forget to include that as well. It’s possible to set more than one redirect, so you can reuse a single app registration for multiple Shiny apps.</p></li>
-<li><p>The <strong>type of redirect</strong>, either native (mobile &amp; desktop) or webapp. There are also other types of redirects, but these are the only ones relevant to R. The difference between a mobile &amp; desktop and a webapp redirect is that you supply a client secret when authenticating with the latter, but not the former. It’s recommended to use a webapp redirect for a Shiny app, as the client secret helps prevent third parties from hijacking your app registration. The client secret is also set as part of the app registration.</p></li>
-<li><p>The <strong>intended audience</strong> of your app, ie, who is allowed to use it. This can be only members of your AAD tenant; members of any AAD tenant; or anyone with a Microsoft account (including personal accounts).</p></li>
-<li><p>The <strong>permissions required</strong> by your app. Refer to the <a href="https://github.com/Azure/Microsoft365R/blob/master/inst/app_registration.md">app_registration.md</a> file for the list of permissions Microsoft365R uses. You can omit any permissions that you don’t need if your app doesn’t use all of Microsoft365R’s functionality, eg if you don’t handle emails you can omit Mail.Send and Mail.ReadWrite.</p></li>
+<li><p>The <strong>redirect URI</strong> of your app, ie, your
+user-facing site address. For example if your app is hosted in
+shinyapps.io, this would be a URL of the form
+<code>https://youraccount.shinyapps.io/appname</code>. If your app uses
+a special port number rather than the default port 443 for HTTPS, don’t
+forget to include that as well. It’s possible to set more than one
+redirect, so you can reuse a single app registration for multiple Shiny
+apps.</p></li>
+<li><p>The <strong>type of redirect</strong>, either native (mobile
+&amp; desktop) or webapp. There are also other types of redirects, but
+these are the only ones relevant to R. The difference between a mobile
+&amp; desktop and a webapp redirect is that you supply a client secret
+when authenticating with the latter, but not the former. It’s
+recommended to use a webapp redirect for a Shiny app, as the client
+secret helps prevent third parties from hijacking your app registration.
+The client secret is also set as part of the app registration.</p></li>
+<li><p>The <strong>intended audience</strong> of your app, ie, who is
+allowed to use it. This can be only members of your AAD tenant; members
+of any AAD tenant; or anyone with a Microsoft account (including
+personal accounts).</p></li>
+<li><p>The <strong>permissions required</strong> by your app. Refer to
+the <a href="https://github.com/Azure/Microsoft365R/blob/master/inst/app_registration.md">app_registration.md</a>
+file for the list of permissions Microsoft365R uses. You can omit any
+permissions that you don’t need if your app doesn’t use all of
+Microsoft365R’s functionality, eg if you don’t handle emails you can
+omit Mail.Send and Mail.ReadWrite.</p></li>
 </ul>
 <p>The following pages at the AAD documentation will be helpful:</p>
 <ul>
-<li><p><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">A step-by-step guide</a> to registering an app in the Azure portal.</p></li>
-<li><p><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis">How to set permissions for an app</a>. For a Shiny app, note that you want <em>delegated</em> permissions from the Microsoft Graph API, not application permissions.</p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">A
+step-by-step guide</a> to registering an app in the Azure
+portal.</p></li>
+<li><p><a href="https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis">How
+to set permissions for an app</a>. For a Shiny app, note that you want
+<em>delegated</em> permissions from the Microsoft Graph API, not
+application permissions.</p></li>
 </ul>
 </div>
 <div id="shiny-code-skeleton" class="section level2">
 <h2>Shiny code skeleton</h2>
-<p>Below is a basic app that logs the user in, retrieves their OneDrive, and lists the contents of the root folder.</p>
-<p>One thing to note is that the regular Microsoft365R client functions like <code>get_sharepoint_site</code>, <code>get_team</code> etc are intended for use on a local machine. While they will still work when called in a web app, it’s a better idea to call the underlying R6 methods directly: Microsoft365R extends AzureGraph with several R6 classes and methods, which do the actual work of interacting with the Microsoft 365 REST API.</p>
-<p>Here, we call the <code>get_drive()</code> method for the <code>AzureGraph::az_user</code> class, which retrieves the OneDrive for a user. For more information, see the online help page in R for the Microsoft365R “add_methods” topic: <code>?add_methods</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(AzureAuth)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(AzureGraph)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(Microsoft365R)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(shiny)</span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a>tenant &lt;-<span class="st"> &quot;your-tenant-here&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># the application/client ID of the app registration you created in AAD</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co"># - not to be confused with the &#39;object ID&#39; or &#39;service principal ID&#39;</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>app &lt;-<span class="st"> &quot;your-app-id-here&quot;</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co"># the address of your app: also the redirect URI of your app registration</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># - AAD allows only HTTPS for non-localhost redirects, not HTTP</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a>redirect &lt;-<span class="st"> &quot;https://example.com/mysite&quot;</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a>port &lt;-<span class="st"> </span>httr<span class="op">::</span><span class="kw">parse_url</span>(redirect)<span class="op">$</span>port</span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="kw">options</span>(<span class="dt">shiny.port=</span><span class="cf">if</span>(<span class="kw">is.null</span>(port)) <span class="dv">443</span> <span class="cf">else</span> <span class="kw">as.numeric</span>(port))</span>
-<span id="cb1-17"><a href="#cb1-17"></a></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co"># if your app reg has a &#39;webapp&#39; redirect, it requires a client secret (password)</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co"># - you should NEVER put secrets in code: here we get it from an environment variable</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co"># - leave the environment variable unset if you have a &#39;desktop &amp; mobile&#39; redirect</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a>pwd &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_SHINY_CLIENT_SECRET&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="cf">if</span>(pwd <span class="op">==</span><span class="st"> &quot;&quot;</span>) pwd &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="co"># get the Graph permissions listed for the app, plus an ID token</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a>resource &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;https://graph.microsoft.com/.default&quot;</span>, <span class="st">&quot;openid&quot;</span>)</span>
-<span id="cb1-26"><a href="#cb1-26"></a></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co"># a simple UI: display the user&#39;s OneDrive</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a>ui &lt;-<span class="st"> </span><span class="kw">fluidPage</span>(</span>
-<span id="cb1-29"><a href="#cb1-29"></a>    <span class="kw">verbatimTextOutput</span>(<span class="st">&quot;drv&quot;</span>)</span>
-<span id="cb1-30"><a href="#cb1-30"></a>)</span>
-<span id="cb1-31"><a href="#cb1-31"></a></span>
-<span id="cb1-32"><a href="#cb1-32"></a>ui_func &lt;-<span class="st"> </span><span class="cf">function</span>(req)</span>
-<span id="cb1-33"><a href="#cb1-33"></a>{</span>
-<span id="cb1-34"><a href="#cb1-34"></a>    opts &lt;-<span class="st"> </span><span class="kw">parseQueryString</span>(req<span class="op">$</span>QUERY_STRING)</span>
-<span id="cb1-35"><a href="#cb1-35"></a>    <span class="cf">if</span>(<span class="kw">is.null</span>(opts<span class="op">$</span>code))</span>
-<span id="cb1-36"><a href="#cb1-36"></a>    {</span>
-<span id="cb1-37"><a href="#cb1-37"></a>        auth_uri &lt;-<span class="st"> </span><span class="kw">build_authorization_uri</span>(resource, tenant, app, <span class="dt">redirect_uri=</span>redirect, <span class="dt">version=</span><span class="dv">2</span>)</span>
-<span id="cb1-38"><a href="#cb1-38"></a>        redir_js &lt;-<span class="st"> </span><span class="kw">sprintf</span>(<span class="st">&quot;location.replace(</span><span class="ch">\&quot;</span><span class="st">%s</span><span class="ch">\&quot;</span><span class="st">);&quot;</span>, auth_uri)</span>
-<span id="cb1-39"><a href="#cb1-39"></a>        tags<span class="op">$</span><span class="kw">script</span>(<span class="kw">HTML</span>(redir_js))</span>
-<span id="cb1-40"><a href="#cb1-40"></a>    }</span>
-<span id="cb1-41"><a href="#cb1-41"></a>    <span class="cf">else</span> ui</span>
-<span id="cb1-42"><a href="#cb1-42"></a>}</span>
-<span id="cb1-43"><a href="#cb1-43"></a></span>
-<span id="cb1-44"><a href="#cb1-44"></a>server &lt;-<span class="st"> </span><span class="cf">function</span>(input, output, session)</span>
-<span id="cb1-45"><a href="#cb1-45"></a>{</span>
-<span id="cb1-46"><a href="#cb1-46"></a>    opts &lt;-<span class="st"> </span><span class="kw">parseQueryString</span>(<span class="kw">isolate</span>(session<span class="op">$</span>clientData<span class="op">$</span>url_search))</span>
-<span id="cb1-47"><a href="#cb1-47"></a>    <span class="cf">if</span>(<span class="kw">is.null</span>(opts<span class="op">$</span>code))</span>
-<span id="cb1-48"><a href="#cb1-48"></a>        <span class="kw">return</span>()</span>
-<span id="cb1-49"><a href="#cb1-49"></a></span>
-<span id="cb1-50"><a href="#cb1-50"></a>    token &lt;-<span class="st"> </span><span class="kw">get_azure_token</span>(resource, tenant, app, <span class="dt">password=</span>pwd, <span class="dt">auth_type=</span><span class="st">&quot;authorization_code&quot;</span>,</span>
-<span id="cb1-51"><a href="#cb1-51"></a>                             <span class="dt">authorize_args=</span><span class="kw">list</span>(<span class="dt">redirect_uri=</span>redirect), <span class="dt">version=</span><span class="dv">2</span>,</span>
-<span id="cb1-52"><a href="#cb1-52"></a>                             <span class="dt">use_cache=</span><span class="ot">FALSE</span>, <span class="dt">auth_code=</span>opts<span class="op">$</span>code)</span>
-<span id="cb1-53"><a href="#cb1-53"></a></span>
-<span id="cb1-54"><a href="#cb1-54"></a>    <span class="co"># display the contents of the user&#39;s OneDrive root folder</span></span>
-<span id="cb1-55"><a href="#cb1-55"></a>    drv &lt;-<span class="st"> </span>ms_graph<span class="op">$</span></span>
-<span id="cb1-56"><a href="#cb1-56"></a><span class="st">        </span><span class="kw">new</span>(<span class="dt">token=</span>token)<span class="op">$</span></span>
-<span id="cb1-57"><a href="#cb1-57"></a><span class="st">        </span><span class="kw">get_user</span>()<span class="op">$</span></span>
-<span id="cb1-58"><a href="#cb1-58"></a><span class="st">        </span><span class="kw">get_drive</span>()</span>
-<span id="cb1-59"><a href="#cb1-59"></a>    output<span class="op">$</span>drv &lt;-<span class="st"> </span><span class="kw">renderPrint</span>(drv<span class="op">$</span><span class="kw">list_files</span>())</span>
-<span id="cb1-60"><a href="#cb1-60"></a>}</span>
-<span id="cb1-61"><a href="#cb1-61"></a></span>
-<span id="cb1-62"><a href="#cb1-62"></a><span class="kw">shinyApp</span>(ui_func, server)</span></code></pre></div>
+<p>Below is a basic app that logs the user in, retrieves their OneDrive,
+and lists the contents of the root folder.</p>
+<p>One thing to note is that the regular Microsoft365R client functions
+like <code>get_sharepoint_site</code>, <code>get_team</code> etc are
+intended for use on a local machine. While they will still work when
+called in a web app, it’s a better idea to call the underlying R6
+methods directly: Microsoft365R extends AzureGraph with several R6
+classes and methods, which do the actual work of interacting with the
+Microsoft 365 REST API.</p>
+<p>Here, we call the <code>get_drive()</code> method for the
+<code>AzureGraph::az_user</code> class, which retrieves the OneDrive for
+a user. For more information, see the online help page in R for the
+Microsoft365R “add_methods” topic: <code>?add_methods</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(AzureAuth)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(AzureGraph)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(Microsoft365R)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>tenant <span class="ot">&lt;-</span> <span class="st">&quot;your-tenant-here&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># the application/client ID of the app registration you created in AAD</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># - not to be confused with the &#39;object ID&#39; or &#39;service principal ID&#39;</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;your-app-id-here&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># the address of your app: also the redirect URI of your app registration</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># - AAD allows only HTTPS for non-localhost redirects, not HTTP</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>redirect <span class="ot">&lt;-</span> <span class="st">&quot;https://example.com/mysite&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>port <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">parse_url</span>(redirect)<span class="sc">$</span>port</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="fu">options</span>(<span class="at">shiny.port=</span><span class="cf">if</span>(<span class="fu">is.null</span>(port)) <span class="dv">443</span> <span class="cf">else</span> <span class="fu">as.numeric</span>(port))</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co"># if your app reg has a &#39;webapp&#39; redirect, it requires a client secret (password)</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co"># - you should NEVER put secrets in code: here we get it from an environment variable</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co"># - leave the environment variable unset if you have a &#39;desktop &amp; mobile&#39; redirect</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>pwd <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;EXAMPLE_SHINY_CLIENT_SECRET&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="cf">if</span>(pwd <span class="sc">==</span> <span class="st">&quot;&quot;</span>) pwd <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co"># get the Graph permissions listed for the app, plus an ID token</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>resource <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;https://graph.microsoft.com/.default&quot;</span>, <span class="st">&quot;openid&quot;</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co"># a simple UI: display the user&#39;s OneDrive</span></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>    <span class="fu">verbatimTextOutput</span>(<span class="st">&quot;drv&quot;</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>)</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>ui_func <span class="ot">&lt;-</span> <span class="cf">function</span>(req)</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>{</span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>    opts <span class="ot">&lt;-</span> <span class="fu">parseQueryString</span>(req<span class="sc">$</span>QUERY_STRING)</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(opts<span class="sc">$</span>code))</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>    {</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a>        auth_uri <span class="ot">&lt;-</span> <span class="fu">build_authorization_uri</span>(resource, tenant, app, <span class="at">redirect_uri=</span>redirect, <span class="at">version=</span><span class="dv">2</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>        redir_js <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&quot;location.replace(</span><span class="sc">\&quot;</span><span class="st">%s</span><span class="sc">\&quot;</span><span class="st">);&quot;</span>, auth_uri)</span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">script</span>(<span class="fu">HTML</span>(redir_js))</span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a>    }</span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a>    <span class="cf">else</span> ui</span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a>}</span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session)</span>
+<span id="cb1-45"><a href="#cb1-45" tabindex="-1"></a>{</span>
+<span id="cb1-46"><a href="#cb1-46" tabindex="-1"></a>    opts <span class="ot">&lt;-</span> <span class="fu">parseQueryString</span>(<span class="fu">isolate</span>(session<span class="sc">$</span>clientData<span class="sc">$</span>url_search))</span>
+<span id="cb1-47"><a href="#cb1-47" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(opts<span class="sc">$</span>code))</span>
+<span id="cb1-48"><a href="#cb1-48" tabindex="-1"></a>        <span class="fu">return</span>()</span>
+<span id="cb1-49"><a href="#cb1-49" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" tabindex="-1"></a>    token <span class="ot">&lt;-</span> <span class="fu">get_azure_token</span>(resource, tenant, app, <span class="at">password=</span>pwd, <span class="at">auth_type=</span><span class="st">&quot;authorization_code&quot;</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" tabindex="-1"></a>                             <span class="at">authorize_args=</span><span class="fu">list</span>(<span class="at">redirect_uri=</span>redirect), <span class="at">version=</span><span class="dv">2</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" tabindex="-1"></a>                             <span class="at">use_cache=</span><span class="cn">FALSE</span>, <span class="at">auth_code=</span>opts<span class="sc">$</span>code)</span>
+<span id="cb1-53"><a href="#cb1-53" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" tabindex="-1"></a>    <span class="co"># display the contents of the user&#39;s OneDrive root folder</span></span>
+<span id="cb1-55"><a href="#cb1-55" tabindex="-1"></a>    drv <span class="ot">&lt;-</span> ms_graph<span class="sc">$</span></span>
+<span id="cb1-56"><a href="#cb1-56" tabindex="-1"></a>        <span class="fu">new</span>(<span class="at">token=</span>token)<span class="sc">$</span></span>
+<span id="cb1-57"><a href="#cb1-57" tabindex="-1"></a>        <span class="fu">get_user</span>()<span class="sc">$</span></span>
+<span id="cb1-58"><a href="#cb1-58" tabindex="-1"></a>        <span class="fu">get_drive</span>()</span>
+<span id="cb1-59"><a href="#cb1-59" tabindex="-1"></a>    output<span class="sc">$</span>drv <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>(drv<span class="sc">$</span><span class="fu">list_files</span>())</span>
+<span id="cb1-60"><a href="#cb1-60" tabindex="-1"></a>}</span>
+<span id="cb1-61"><a href="#cb1-61" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" tabindex="-1"></a><span class="fu">shinyApp</span>(ui_func, server)</span></code></pre></div>
 </div>
 
 
