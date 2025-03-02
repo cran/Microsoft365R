@@ -398,7 +398,7 @@ for details on the permissions that Microsoft365R requires.</p>
 <p>Rather than getting the default app registration approved, you can
 also create your own registration for authentication. If this is for use
 in a local R session, it should have a mobile &amp; desktop redirect URI
-of <code>https://localhost:1410</code> (not a web or SPA redirect), and
+of <code>http://localhost:1410</code> (not a web or SPA redirect), and
 the “Allow native client” setting should be enabled. You can use the
 same permissions as the default app, or set your own: for example, if
 you know you don’t need to interact with Outlook, you can omit the
@@ -434,28 +434,14 @@ Directory.</p>
 <h3>Using other app registrations: last-resort workarounds</h3>
 <p>The above methods are the <strong>recommended solutions</strong> to
 dealing with access restrictions on Microsoft365R. If they are not
-feasible, it’s possible to work around these issues by piggybacking on
-other apps:</p>
-<ul>
-<li><p>By setting the R option <code>microsoft365r_use_cli_app_id</code>
-to a non-NULL value, Microsoft365R will authenticate using the app ID
-for the CLI for Microsoft 365—effectively pretending to be the CLI
-itself. Technically this app still requires admin approval, but it is in
-widespread use and is maintained by Microsoft employees, and so may
-already be allowed in your organisation. The CLI supports most Microsoft
-365 services, but not Outlook or personal OneDrive.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">options</span>(<span class="at">microsoft365r_use_cli_app_id=</span><span class="cn">TRUE</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">get_team</span>(<span class="st">&quot;My team&quot;</span>)</span></code></pre></div></li>
-<li><p>You can authenticate using the Azure CLI’s app ID:
-<code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code>. This is a first-party
-Microsoft app, and hence can be used in any tenant. It is not intended
-for use with Microsoft 365, so not all functionality may be supported;
-however it should be possible to access Teams and SharePoint sites (but
-not Outlook, personal OneDrive or OneDrive for Business).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="at">app=</span><span class="st">&quot;04b07795-8ddb-461a-bbee-02f9e1bf7b46&quot;</span>)</span></code></pre></div></li>
-</ul>
-<p>Be warned that these workarounds may draw the attention of your
-admin!</p>
+feasible, it’s possible to work around these issues by using the Azure
+CLI’s app ID: <code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code>. This is
+a first-party Microsoft app, and hence can be used in any tenant. It is
+not intended for use with Microsoft 365, so not all functionality may be
+supported; however it should be possible to access Teams and SharePoint
+sites (but not Outlook, personal OneDrive or OneDrive for Business).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">get_sharepoint_site</span>(<span class="st">&quot;My site&quot;</span>, <span class="at">app=</span><span class="st">&quot;04b07795-8ddb-461a-bbee-02f9e1bf7b46&quot;</span>)</span></code></pre></div>
+<p>Be warned that this may draw the attention of your admin!</p>
 </div>
 </div>
 <div id="authenticating-with-a-token" class="section level2">
@@ -479,15 +465,15 @@ CLI for Microsoft 365 is
 however, these app IDs <strong>only</strong> work for a local R session;
 you must create your own app registration if you want to use the package
 inside a Shiny app.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># authenticating separately to working with the MS365 API</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>scopes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="st">&quot;https://graph.microsoft.com/Files.ReadWrite.All&quot;</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="st">&quot;https://graph.microsoft.com/User.Read&quot;</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="st">&quot;openid&quot;</span>, <span class="st">&quot;offline_access&quot;</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;d44a05d5-c6a5-4bbb-82d2-443123722380&quot;</span> <span class="co"># for local use only</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>token <span class="ot">&lt;-</span> AzureAuth<span class="sc">::</span><span class="fu">get_azure_token</span>(scopes, <span class="st">&quot;mytenant&quot;</span>, app, <span class="at">version=</span><span class="dv">2</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>od <span class="ot">&lt;-</span> <span class="fu">get_business_onedrive</span>(<span class="at">token=</span>token)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># authenticating separately to working with the MS365 API</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>scopes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="st">&quot;https://graph.microsoft.com/Files.ReadWrite.All&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="st">&quot;https://graph.microsoft.com/User.Read&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="st">&quot;openid&quot;</span>, <span class="st">&quot;offline_access&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="st">&quot;d44a05d5-c6a5-4bbb-82d2-443123722380&quot;</span> <span class="co"># for local use only</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>token <span class="ot">&lt;-</span> AzureAuth<span class="sc">::</span><span class="fu">get_azure_token</span>(scopes, <span class="st">&quot;mytenant&quot;</span>, app, <span class="at">version=</span><span class="dv">2</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>od <span class="ot">&lt;-</span> <span class="fu">get_business_onedrive</span>(<span class="at">token=</span>token)</span></code></pre></div>
 </div>
 <div id="other-issues" class="section level2">
 <h2>Other issues</h2>
@@ -495,8 +481,8 @@ inside a Shiny app.</p>
 to reauthenticate each time. If you’re experiencing authentication
 failures, you can try clearing the saved data by running the following
 code:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>AzureAuth<span class="sc">::</span><span class="fu">clean_token_directory</span>()</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>AzureGraph<span class="sc">::</span><span class="fu">delete_graph_login</span>(<span class="at">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>AzureAuth<span class="sc">::</span><span class="fu">clean_token_directory</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>AzureGraph<span class="sc">::</span><span class="fu">delete_graph_login</span>(<span class="at">tenant=</span><span class="st">&quot;mytenant&quot;</span>)</span></code></pre></div>
 <p>You can also consult the vignettes from the AzureAuth and AzureGraph
 packages for more information on this topic.</p>
 <ul>

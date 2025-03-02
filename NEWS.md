@@ -1,3 +1,25 @@
+# Microsoft365R 2.4.1
+
+## OneDrive/SharePoint
+
+- In the `ms_drive_item$load_dataframe()` method, pass the `...` argument to `read_delim`.
+- Add the ability to load Excel files (with extension .xls or .xlsx) to the `ms_drive_item$load_dataframe()` method. This requires the readxl package to be installed.
+- Fix a bug in downloading shared files in business SharePoint/OneDrive (#189, #206)
+
+## Teams
+
+- Enable deleting of chat messages, now that this functionality is exposed in the underlying Graph API (#166).
+- Add the ability to create shared channels (#174).
+
+## Planner
+
+- Fix a bug in the `ms_plan$get_details()` method.
+
+## Other
+
+- Remove references to the Microsoft365 CLI, as this no longer has a multi-tenant app registration and hence cannot be used for authentication. This means you'll have to either allow the Microsoft365R app ID within your tenant or create your own app registration (both of which will require Azure admin access). (#215)
+
+
 # Microsoft365R 2.4.0
 
 ## OneDrive/SharePoint

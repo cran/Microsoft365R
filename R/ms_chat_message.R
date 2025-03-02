@@ -10,7 +10,7 @@
 #' - `properties`: The item properties (metadata).
 #' @section Methods:
 #' - `new(...)`: Initialize a new object. Do not call this directly; see 'Initialization' below.
-#' - `delete(confirm=TRUE)`: Delete this message. Currently the Graph API does not support deleting Teams messages, so this method is disabled.
+#' - `delete(confirm=TRUE)`: Delete this message.
 #' - `update(...)`: Update the message's properties (metadata) in Microsoft Graph.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the message.
 #' - `sync_fields()`: Synchronise the R object with the message metadata in Microsoft Graph.
@@ -28,7 +28,7 @@
 #' - `content_type`: Either "text" (the default) or "html".
 #' - `attachments`: Optional vector of filenames.
 #' - `inline`: Optional vector of image filenames that will be inserted into the body of the message. The images must be PNG or JPEG, and the `content_type` argument must be "html" to include inline content.
-#' - `mentions`: Optional vector of @mentions that will be inserted into the body of the message. This should be either an object of one of the following classes, or a list of the same: [`az_user`], [`ms_team`], [`ms_channel`], [`ms_team_member`]. The `content_type` argument must be "html" to include mentions.
+#' - `mentions`: Optional vector of @mentions that will be inserted into the body of the message. This should be either an object of one of the following classes, or a list of the same: [`AzureGraph::az_user`], [`ms_team`], [`ms_channel`], [`ms_team_member`]. The `content_type` argument must be "html" to include mentions.
 #'
 #' Teams channels don't support nested replies, so any methods dealing with replies will fail if the message object is itself a reply.
 #'
@@ -57,7 +57,7 @@
 #' }
 #' @format An R6 object of class `ms_chat_message`, inheriting from `ms_object`.
 #' @export
-ms_chat_message <- R6::R6Class("ms_chat_message", inherit=ms_object,
+ms_chat_message <- R6::R6Class("ms_chat_message", inherit=ms_teams_object,
 
 public=list(
 
@@ -105,11 +105,6 @@ public=list(
     {
         private$assert_not_nested_reply()
         self$get_reply(message_id)$delete(confirm=confirm)
-    },
-
-    delete=function(confirm=TRUE)
-    {
-        stop("Deleting Teams messages is not currently supported", call.=FALSE)
     },
 
     print=function(...)

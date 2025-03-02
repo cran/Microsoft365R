@@ -16,7 +16,7 @@
 #' - `sync_fields()`: Synchronise the R object with the team metadata in Microsoft Graph.
 #' - `list_channels(filter=NULL, n=Inf)`: List the channels for this team.
 #' - `get_channel(channel_name, channel_id)`: Retrieve a channel. If the name and ID are not specified, returns the primary channel.
-#' - `create_channel(channel_name, description, membership)`: Create a new channel. Optionally, you can specify a short text description of the channel, and the type of membership: either standard or private (invitation-only).
+#' - `create_channel(channel_name, description, membership)`: Create a new channel. Optionally, you can specify a short text description of the channel, and the type of membership: either standard, shared or private (invitation-only). Note that creating a shared channel is an _asynchronous_ operation; the call returns before the creation is finished. You can retrieve the channel with the `get_channel` method after waiting for a short while.
 #' - `delete_channel(channel_name, channel_id, confirm=TRUE)`: Delete a channel; by default, ask for confirmation first. You cannot delete the primary channel of a team. Note that Teams keeps track of all channels ever created, even if you delete them (you can see the deleted channels by going to the "Manage team" pane for a team, then the "Channels" tab, and expanding the "Deleted" entry); therefore, try not to create and delete channels unnecessarily.
 #' - `list_drives(filter=NULL, n=Inf)`: List the drives (shared document libraries) associated with this team.
 #' - `get_drive(drive_name, drive_id)`: Retrieve a shared document library for this team. If the name and ID are not specified, this returns the default document library.
@@ -26,14 +26,14 @@
 #' - `get_member(name, email, id)`: Retrieve a specific member of the channel, as a `ms_team_member` object. Supply only one of the member name, email address or ID.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `get_team` and `list_teams` methods of the [`ms_graph`], [`az_user`] or [`az_group`] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual team.
+#' Creating new objects of this class should be done via the `get_team` and `list_teams` methods of the [`AzureGraph::ms_graph`], [`AzureGraph::az_user`] or [`AzureGraph::az_group`] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual team.
 #'
 #' @section List methods:
 #' All `list_*` methods have `filter` and `n` arguments to limit the number of results. The former should be an [OData expression](https://learn.microsoft.com/en-us/graph/query-parameters#filter-parameter) as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are `filter=NULL` and `n=Inf`. If `n=NULL`, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
 #'
 #' Support in the underlying Graph API for OData queries is patchy. Not all endpoints that return lists of objects support filtering, and if they do, they may not allow all of the defined operators. If your filtering expression results in an error, you can carry out the operation without filtering and then filter the results on the client side.
 #' @seealso
-#' [`ms_graph`], [`az_group`], [`ms_channel`], [`ms_site`], [`ms_drive`]
+#' [`AzureGraph::ms_graph`], [`AzureGraph::az_group`], [`ms_channel`], [`ms_site`], [`ms_drive`]
 #'
 #' [Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
 #' [Microsoft Teams API reference](https://learn.microsoft.com/en-us/graph/api/resources/teams-api-overview?view=graph-rest-1.0)
@@ -57,7 +57,7 @@
 #' }
 #' @format An R6 object of class `ms_team`, inheriting from `ms_object`.
 #' @export
-ms_team <- R6::R6Class("ms_team", inherit=ms_object,
+ms_team <- R6::R6Class("ms_team", inherit=ms_teams_object,
 
 public=list(
 
@@ -88,10 +88,11 @@ public=list(
         else if(is.null(channel_name) && !is.null(channel_id))
             file.path("channels", channel_id)
         else stop("Do not supply both the channel name and ID", call.=FALSE)
+
         ms_channel$new(self$token, self$tenant, self$do_operation(op), team_id=self$properties$id)
     },
 
-    create_channel=function(channel_name, description="", membership=c("standard", "private"))
+    create_channel=function(channel_name, description="", membership=c("standard", "private", "shared"))
     {
         membership <- match.arg(membership)
         body <- list(
@@ -99,7 +100,13 @@ public=list(
             description=description,
             membershipType=membership
         )
-        ms_channel$new(self$token, self$tenant, self$do_operation("channels", body=body, http_verb="POST"),
+        obj <- self$do_operation("channels", body=body, http_verb="POST")
+        if(membership == "shared")
+        {
+            cat("Shared channel creation started in the background. Use the 'get_channel' method to retrieve it.\n")
+            return(NULL)
+        }
+        ms_channel$new(self$token, self$tenant, ,
                        team_id=self$properties$id)
     },
 

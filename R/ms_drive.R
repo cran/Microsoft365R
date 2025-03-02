@@ -37,7 +37,7 @@
 #' - `save_rdata(..., file)`: Save the specified objects to a .RData file.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `get_drive` methods of the [`ms_graph`], [`az_user`] or [`ms_site`] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual drive.
+#' Creating new objects of this class should be done via the `get_drive` methods of the [`AzureGraph::ms_graph`], [`AzureGraph::az_user`] or [`ms_site`] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to retrieve or create the actual drive.
 #'
 #' @section File and folder operations:
 #' This class exposes methods for carrying out common operations on files and folders. They call down to the corresponding methods for the [`ms_drive_item`] class. In most cases an item can be specified either by path or ID. The former is more user-friendly but subject to change if the file is moved or renamed; the latter is an opaque string but is immutable regardless of file operations.
@@ -262,12 +262,20 @@ public=list(
             opts$allowExternal <- "true"
         if(!is.null(filter))
             opts$`filter` <- filter
-        children <- self$do_operation("sharedWithMe", options=opts, simplify=FALSE)
+        children <- self$do_operation("sharedWithMe", options=opts, simplify=TRUE)
 
-        # get file list as a data frame, or return the iterator immediately if n is NULL
+        # get list of objects, or return the iterator immediately if n is NULL
         out <- extract_list_values(self$get_list_pager(children), n)
-        names(out) <- sapply(out, function(obj) obj$properties$name)
-        out
+        if(is.null(n))
+            return(out)
+
+        if(is_empty(out))
+            out <- data.frame(name=character(), size=numeric(), isdir=logical(), remoteItem=I(list()))
+
+        out$remoteItem <- lapply(seq_len(nrow(out)),
+            function(i) ms_drive_item$new(self$token, self$tenant, out$remoteItem[i, ], remote=TRUE))
+
+        out$remoteItem
     },
 
     load_dataframe=function(path=NULL, itemid=NULL, ...)
